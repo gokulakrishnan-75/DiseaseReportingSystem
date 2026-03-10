@@ -3,5 +3,35 @@
 <button onclick="loadAnalytics()">Show Analytics</button>
 
 <ul id="analytics"></ul>
+<h2>Disease Analytics</h2>
 
+<canvas id="diseaseChart"></canvas>
 <script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+fetch("/analytics")
+.then(res=>res.json())
+.then(data=>{
+
+let labels = data.map(d=>d._id)
+let values = data.map(d=>d.count)
+
+const ctx = document.getElementById("diseaseChart")
+
+new Chart(ctx,{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+label:"Number of Cases",
+data:values,
+borderWidth:1
+}]
+}
+})
+
+})
+
+</script>
