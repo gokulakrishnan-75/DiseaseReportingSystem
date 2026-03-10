@@ -154,21 +154,34 @@ document.getElementById("totalLocations").textContent=locations.size;
 
 function populateFilter(reports){
 
-const select=document.getElementById("diseaseFilter");
+const select = document.getElementById("diseaseFilter");
 
-select.innerHTML='<option value="all">All Diseases</option>';
+/* CLEAR OLD OPTIONS */
 
-const diseases=new Set();
+select.innerHTML = '<option value="all">All Diseases</option>';
 
-reports.forEach(r=>diseases.add(r.disease));
+/* GET UNIQUE DISEASES */
 
-diseases.forEach(d=>{
+const diseases = new Set();
 
-const opt=document.createElement("option");
-opt.value=d;
-opt.textContent=d;
+reports.forEach(report => {
 
-select.appendChild(opt);
+if(report.disease){
+diseases.add(report.disease);
+}
+
+});
+
+/* ADD OPTIONS */
+
+diseases.forEach(disease => {
+
+const option = document.createElement("option");
+
+option.value = disease;
+option.textContent = disease;
+
+select.appendChild(option);
 
 });
 
