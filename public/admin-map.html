@@ -1,83 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<title>Disease Map</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#f5f5f5;
-}
-
-h2{
-text-align:center;
-padding:15px;
-background:#2c3e50;
-color:white;
-}
-
-#map{
-height:90vh;
-width:100%;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h2>🌍 Disease Report Map</h2>
+<select id="diseaseFilter">
+<option value="all">All Diseases</option>
+</select>
 
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
 
-// initialize map
-
 const map = L.map('map').setView([20.5937,78.9629],5)
-
-// map tiles
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 maxZoom:18
 }).addTo(map)
 
-// get reports
+let markers=[]
+let reports=[]
 
 fetch("/reports")
-.then(res => res.json())
-.then(data => {
+.then(res=>res.json())
+.then(data=>{
 
-console.log(data)
+reports=data
 
-data.forEach(report => {
+const filter=document.getElementById("diseaseFilter")
 
-if(report.lat && report.lng){
+let diseases=new Set()
 
-let marker = L.marker([report.lat,report.lng]).addTo(map)
+data.forEach(r=>{
+
+diseases.add(r.disease)
+
+})
+
+/* create dropdown options */
+
+diseases.forEach(d=>{
+
+let option=document.createElement("option")
+option.value=d
+option.textContent=d
+filter.appendChild(option)
+
+})
+
+showMarkers("all")
+
+})
+
+function showMarkers(disease){
+
+markers.forEach(m=>map.removeLayer(m))
+markers=[]
+
+reports.forEach(r=>{
+
+if(disease==="all" || r.disease===disease){
+
+if(r.lat && r.lng){
+
+let marker=L.marker([r.lat,r.lng]).addTo(map)
 
 marker.bindPopup(
-`<b>Disease:</b> ${report.disease}<br>
-<b>Name:</b> ${report.name}<br>
-<b>Location:</b> ${report.location}<br>
-<b>Date:</b> ${report.date}`
+`<b>Disease:</b> ${r.disease}<br>
+<b>Name:</b> ${r.name}<br>
+<b>Location:</b> ${r.location}`
 )
+
+markers.push(marker)
+
+}
 
 }
 
 })
 
+}
+
+document.getElementById("diseaseFilter").addEventListener("change",function(){
+
+showMarkers(this.value)
+
 })
 
 </script>
-
-</body>
-</html>
