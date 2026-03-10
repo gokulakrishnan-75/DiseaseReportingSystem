@@ -1,5 +1,7 @@
 const API = window.location.origin;
-/* ---------------- SIGNUP ---------------- */
+const API = window.location.origin;
+
+/* SIGNUP */
 
 async function signup(){
 
@@ -17,21 +19,21 @@ body:JSON.stringify({username,password})
 const data = await res.json()
 
 if(data.status){
-alert("Signup successful")
+alert("Signup Successful")
 window.location="login.html"
 }else{
-alert("Signup failed")
+alert("Signup Failed")
 }
 
 }
 
 
-/* ---------------- LOGIN ---------------- */
+/* LOGIN */
 
 async function login(){
 
-const username=document.getElementById("username").value
-const password=document.getElementById("password").value
+const username = document.getElementById("username").value
+const password = document.getElementById("password").value
 
 const res = await fetch(API + "/login",{
 method:"POST",
