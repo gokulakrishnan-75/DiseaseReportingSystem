@@ -393,3 +393,101 @@ font-size:13px;
 }
 
 }
+/* ===== ADMIN MAP PAGE ===== */
+
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+}
+
+/* HEADER */
+
+.header{
+text-align:center;
+background:rgba(0,0,0,0.7);
+color:white;
+padding:18px;
+font-size:24px;
+font-weight:600;
+}
+
+/* STAT CARDS */
+
+.stats{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+width:180px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+text-align:center;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card h3{
+margin:0;
+color:#333;
+font-size:18px;
+}
+
+.card p{
+margin-top:10px;
+font-size:24px;
+font-weight:bold;
+color:#4facfe;
+}
+
+/* MAP CONTROLS */
+
+.map-controls{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+.map-controls select,
+.map-controls input{
+
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.map-controls button{
+
+padding:10px 16px;
+border:none;
+background:#4facfe;
+color:white;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.map-controls button:hover{
+background:#007bff;
+}
+
+/* MAP */
+
+#map{
+height:500px;
+width:95%;
+margin:auto;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
