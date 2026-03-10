@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Disease Map</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+
+body{
+margin:0;
+font-family:Poppins;
+}
+
+#map{
+height:100vh;
+width:100%;
+}
+
+.header{
+background:#2a5298;
+color:white;
+padding:15px;
+text-align:center;
+font-size:22px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">🌍 Disease Map</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+/* CREATE MAP */
+
+const map = L.map('map').setView([20.5937,78.9629],5)
+
+/* MAP TILE */
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19
+}).addTo(map)
+
+/* GET REPORT DATA */
+
+fetch("/reports")
+.then(res=>res.json())
+.then(data=>{
+
+data.forEach(r=>{
+
+if(r.lat && r.lng){
+
+const marker = L.marker([r.lat,r.lng]).addTo(map)
+
+marker.bindPopup(
+`<b>${r.disease}</b><br>
+Patient: ${r.name}<br>
+Location: ${r.location}`
+)
+
+}
+
+})
+
+})
+
+</script>
+
+</body>
+</html>

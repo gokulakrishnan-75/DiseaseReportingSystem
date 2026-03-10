@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+</head>
+
+<body>
+
+<div class="admin-container">
+
+<h1>Admin Dashboard</h1>
+
+<div class="admin-controls">
+
+<button onclick="loadReports()">Load Reports</button>
+<button onclick="deleteSelected()">Delete Selected</button>
+<button onclick="downloadReports()">Download Excel</button>
+<button onclick="loadAnalytics()">Show Analytics</button>
+
+</div>
+
+<div class="table-container">
+
+<table class="report-table">
+
+<thead>
+
+<tr>
+<th>Select</th>
+<th>Name</th>
+<th>Age</th>
+<th>Phone</th>
+<th>Disease</th>
+<th>Location</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="reports">
+
+</tbody>
+
+</table>
+<br>
+<br>
+<button onclick="openMap()">🌍 View Map</button>
+
+<script>
+function openMap(){
+window.location.href="/admin-map"
+}
+</script>
+
+</div>
+
+<br>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+
+<script>
+
+</script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
