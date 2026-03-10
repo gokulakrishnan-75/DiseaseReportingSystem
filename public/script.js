@@ -1,3 +1,4 @@
+const API = window.location.origin;
 /* ---------------- SIGNUP ---------------- */
 
 async function signup(){
@@ -29,31 +30,29 @@ alert("Signup failed")
 
 async function login(){
 
-let data={
-username:username.value,
-password:password.value
-}
+const username=document.getElementById("username").value
+const password=document.getElementById("password").value
 
-let res=await fetch("/login",{
+const res = await fetch(API + "/login",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({username,password})
 })
 
-let result=await res.json()
+const data = await res.json()
 
-if(result.status){
+if(data.status){
 
-if(result.role=="admin")
-location.href="admin_dashboard.html"
-
-else
-location.href="user_dashboard.html"
+if(data.role==="admin"){
+window.location="admin_dashboard.html"
+}else{
+window.location="user_dashboard.html"
+}
 
 }else{
-
-alert("Invalid Login")
-
+alert("Invalid login")
 }
 
 }

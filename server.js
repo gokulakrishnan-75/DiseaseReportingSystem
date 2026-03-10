@@ -3,38 +3,43 @@ require("dotenv").config()
 const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
-const bodyParser = require("body-parser")
 const path = require("path")
 const twilio = require("twilio")
 
 const app = express()
 
+/* ---------------- MIDDLEWARE ---------------- */
+
 app.use(cors())
-app.use(bodyParser.json())
-app.use(express.static(path.join(__dirname,"public")))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, "public")))
 
 /* ---------------- MONGODB CONNECTION ---------------- */
 
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.log(err))
+mongoose.connect(process.env.MONGO_URI, {
+useNewUrlParser: true,
+useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("MongoDB Error:", err))
 
 /* ---------------- DATABASE MODELS ---------------- */
 
-const User = mongoose.model("User",{
-username:String,
-password:String
+const User = mongoose.model("User", {
+username: String,
+password: String
 })
 
-const Report = mongoose.model("Report",{
-name:String,
-phone:String,
-age:Number,
-disease:String,
-location:String,
-date:String,
-lat:Number,
-lng:Number
+const Report = mongoose.model("Report", {
+name: String,
+phone: String,
+age: Number,
+disease: String,
+location: String,
+date: String,
+lat: Number,
+lng: Number
 })
 
 /* ---------------- TWILIO SETUP ---------------- */
@@ -46,53 +51,85 @@ process.env.TWILIO_AUTH
 
 /* ---------------- HOME PAGE ---------------- */
 
-app.get("/",(req,res)=>{
-res.sendFile(path.join(__dirname,"public","index.html"))
+app.get("/", (req, res) => {
+res.sendFile(path.join(__dirname, "public", "index.html"))
 })
 
 /* ---------------- SIGNUP ---------------- */
 
-app.post("/signup",async(req,res)=>{
+app.post("/signup", async (req, res) => {
 
-const user = new User(req.body)
+try {
 
+const { username, password } = req.body
+
+if (!username || !password) {
+return res.json({ status: false, message: "Missing fields" })
+}
+
+const existing = await User.findOne({ username })
+
+if (existing) {
+return res.json({ status: false, message: "User already exists" })
+}
+
+const user = new User({ username, password })
 await user.save()
 
-res.json({status:true})
+res.json({ status: true })
+
+} catch (error) {
+
+console.log("Signup Error:", error)
+res.json({ status: false })
+
+}
 
 })
 
 /* ---------------- LOGIN ---------------- */
 
-app.post("/login",async(req,res)=>{
+app.post("/login", async (req, res) => {
 
-const {username,password} = req.body
+try {
+
+const { username, password } = req.body
 
 /* ADMIN LOGIN */
 
-if(username === process.env.ADMIN_USER && password === process.env.ADMIN_PASS){
+if (
+username === process.env.ADMIN_USER &&
+password === process.env.ADMIN_PASS
+) {
 
 return res.json({
-status:true,
-role:"admin"
+status: true,
+role: "admin"
 })
 
 }
 
-/* NORMAL USER LOGIN */
+/* USER LOGIN */
 
-const user = await User.findOne({username,password})
+const user = await User.findOne({ username, password })
 
-if(user){
+if (user) {
 
 res.json({
-status:true,
-role:"user"
+status: true,
+role: "user"
 })
 
-}else{
+} else {
 
-res.json({status:false})
+res.json({ status: false })
+
+}
+
+} catch (error) {
+
+console.log("Login Error:", error)
+res.json({ status: false })
 
 }
 
@@ -100,19 +137,18 @@ res.json({status:false})
 
 /* ---------------- REPORT DISEASE ---------------- */
 
-app.post("/report", async (req,res)=>{
+app.post("/report", async (req, res) => {
 
-try{
+try {
 
 const report = new Report(req.body)
-
 await report.save()
 
-let mapsLink = `https://www.google.com/maps?q=${req.body.lat},${req.body.lng}`
+const mapsLink = `https://www.google.com/maps?q=${req.body.lat},${req.body.lng}`
 
 await client.messages.create({
 
-body:`🚨 Disease Report Alert
+body: `🚨 Disease Report Alert
 
 Name: ${req.body.name}
 Phone: ${req.body.phone}
@@ -129,13 +165,12 @@ to: process.env.ADMIN_PHONE
 
 })
 
-res.json({status:"Report Submitted Successfully"})
+res.json({ status: "Report Submitted Successfully" })
 
-}catch(err){
+} catch (error) {
 
-console.log(err)
-
-res.json({status:"Error sending report"})
+console.log("Report Error:", error)
+res.json({ status: "Error submitting report" })
 
 }
 
@@ -143,39 +178,53 @@ res.json({status:"Error sending report"})
 
 /* ---------------- GET REPORTS ---------------- */
 
-app.get("/reports",async(req,res)=>{
+app.get("/reports", async (req, res) => {
+
+try {
 
 const data = await Report.find()
-
 res.json(data)
+
+} catch (error) {
+
+res.json([])
+
+}
 
 })
 
 /* ---------------- ANALYTICS ---------------- */
 
-app.get("/analytics",async(req,res)=>{
+app.get("/analytics", async (req, res) => {
+
+try {
 
 const data = await Report.aggregate([
-{$group:{_id:"$disease",count:{$sum:1}}}
+{ $group: { _id: "$disease", count: { $sum: 1 } } }
 ])
 
 res.json(data)
+
+} catch {
+
+res.json([])
+
+}
 
 })
 
 /* ---------------- DELETE REPORT ---------------- */
 
-app.delete("/deleteReport/:id", async (req,res)=>{
+app.delete("/deleteReport/:id", async (req, res) => {
 
-try{
+try {
 
 await Report.findByIdAndDelete(req.params.id)
+res.json({ status: true })
 
-res.json({status:true})
+} catch {
 
-}catch{
-
-res.json({status:false})
+res.json({ status: false })
 
 }
 
@@ -183,19 +232,21 @@ res.json({status:false})
 
 /* ---------------- BULK DELETE ---------------- */
 
-app.post("/bulkDelete", async (req,res)=>{
+app.post("/bulkDelete", async (req, res) => {
 
-try{
+try {
 
 const ids = req.body.ids
 
-await Report.deleteMany({_id:{$in:ids}})
+await Report.deleteMany({
+_id: { $in: ids }
+})
 
-res.json({status:true})
+res.json({ status: true })
 
-}catch{
+} catch {
 
-res.json({status:false})
+res.json({ status: false })
 
 }
 
@@ -203,22 +254,21 @@ res.json({status:false})
 
 /* ---------------- DOWNLOAD CSV ---------------- */
 
-app.get("/download", async (req,res)=>{
+app.get("/download", async (req, res) => {
 
 const reports = await Report.find()
 
 let csv = "Name,Phone,Age,Disease,Location,Date,Map Link\n"
 
-reports.forEach(r=>{
+reports.forEach(r => {
 
-const mapLink=`https://www.google.com/maps?q=${r.lat},${r.lng}`
+const mapLink = `https://www.google.com/maps?q=${r.lat},${r.lng}`
 
-csv += `${r.name},${r.phone},${r.age},${r.disease},${r.location},${r.date},${mapLink}\n`
+csv += `"${r.name}","${r.phone}","${r.age}","${r.disease}","${r.location}","${r.date}","${mapLink}"\n`
 
 })
 
-res.header("Content-Type","text/csv")
-
+res.header("Content-Type", "text/csv")
 res.attachment("reports.csv")
 
 return res.send(csv)
@@ -227,14 +277,14 @@ return res.send(csv)
 
 /* ---------------- MAP PAGE ---------------- */
 
-app.get("/admin-map",(req,res)=>{
-res.sendFile(path.join(__dirname,"public","map.html"))
+app.get("/admin-map", (req, res) => {
+res.sendFile(path.join(__dirname, "public", "map.html"))
 })
 
 /* ---------------- SERVER START ---------------- */
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT,()=>{
-console.log(`Server running on port ${PORT}`)
+app.listen(PORT, () => {
+console.log("Server running on port " + PORT)
 })
