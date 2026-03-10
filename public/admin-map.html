@@ -1,29 +1,116 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<title>Disease Map</title>
+<title>Disease Monitoring Map</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial;
-background:#f5f5f5;
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+font-family:Poppins;
 }
 
-h2{
-text-align:center;
-padding:15px;
-background:#2c3e50;
+/* HEADER */
+
+.header{
+background:rgba(0,0,0,0.6);
 color:white;
+padding:15px;
+text-align:center;
+font-size:24px;
+font-weight:600;
+letter-spacing:1px;
 }
+
+/* STATS */
+
+.stats{
+display:flex;
+justify-content:center;
+gap:20px;
+margin:20px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.2);
+text-align:center;
+width:180px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card h3{
+margin:0;
+font-size:18px;
+color:#333;
+}
+
+.card p{
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
+color:#4facfe;
+}
+
+/* MAP CONTROLS */
+
+.map-controls{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-bottom:10px;
+flex-wrap:wrap;
+}
+
+.map-controls select,
+.map-controls input{
+
+padding:8px 12px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.map-controls button{
+
+padding:10px 16px;
+background:#4facfe;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.map-controls button:hover{
+background:#007bff;
+}
+
+/* MAP */
 
 #map{
-height:90vh;
-width:100%;
+height:500px;
+width:95%;
+margin:auto;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 </style>
@@ -32,50 +119,227 @@ width:100%;
 
 <body>
 
-<h2>🌍 Disease Report Map</h2>
+<div class="header">
+🌍 Disease Monitoring Admin Map
+</div>
+
+<!-- STATISTICS -->
+
+<div class="stats">
+
+<div class="card">
+<h3>Total Reports</h3>
+<p id="totalReports">0</p>
+</div>
+
+<div class="card">
+<h3>Total Diseases</h3>
+<p id="totalDiseases">0</p>
+</div>
+
+<div class="card">
+<h3>Locations</h3>
+<p id="totalLocations">0</p>
+</div>
+
+</div>
+
+<!-- CONTROLS -->
+
+<div class="map-controls">
+
+<select id="diseaseFilter">
+<option value="all">All Diseases</option>
+</select>
+
+<input type="text" id="searchLocation" placeholder="Search location">
+
+<button onclick="loadReports()">Refresh</button>
+
+</div>
+
+<!-- MAP -->
 
 <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
 
-// initialize map
+/* MAP INITIALIZATION */
 
-const map = L.map('map').setView([20.5937,78.9629],5)
+const map = L.map('map').setView([20.5937,78.9629],5);
 
-// map tiles
+const normal = L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:18
-}).addTo(map)
+const topo = L.tileLayer(
+'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+);
 
-// get reports
+L.control.layers({
+"Normal Map":normal,
+"Topographic":topo
+}).addTo(map);
 
-fetch("/reports")
-.then(res => res.json())
-.then(data => {
+/* VARIABLES */
 
-console.log(data)
+let allReports=[];
+let markers=[];
 
-data.forEach(report => {
+/* AUTO COLOR */
 
-if(report.lat && report.lng){
+function getColor(disease){
 
-let marker = L.marker([report.lat,report.lng]).addTo(map)
+const colors=[
+"red","blue","green","orange","purple","brown"
+];
 
-marker.bindPopup(
-`<b>Disease:</b> ${report.disease}<br>
-<b>Name:</b> ${report.name}<br>
-<b>Location:</b> ${report.location}<br>
-<b>Date:</b> ${report.date}`
-)
+return colors[disease.length % colors.length];
 
 }
 
-})
+/* CLEAR MARKERS */
 
-})
+function clearMarkers(){
+
+markers.forEach(m=>map.removeLayer(m));
+markers=[];
+
+}
+
+/* DISPLAY REPORTS */
+
+function displayReports(reports){
+
+clearMarkers();
+
+reports.forEach(r=>{
+
+if(!r.lat || !r.lng) return;
+
+const color=getColor(r.disease);
+
+const marker=L.circleMarker(
+[r.lat,r.lng],
+{
+radius:8,
+color:color,
+fillColor:color,
+fillOpacity:0.8
+}
+).addTo(map);
+
+marker.bindPopup(
+`
+<b>Disease:</b> ${r.disease}<br>
+<b>Location:</b> ${r.location}<br>
+<b>Phone:</b> ${r.phone}
+`
+);
+
+markers.push(marker);
+
+});
+
+}
+
+/* POPULATE FILTER */
+
+function populateFilter(reports){
+
+const select=document.getElementById("diseaseFilter");
+
+const diseases=new Set();
+
+reports.forEach(r=>diseases.add(r.disease));
+
+diseases.forEach(d=>{
+
+const opt=document.createElement("option");
+opt.value=d;
+opt.textContent=d;
+
+select.appendChild(opt);
+
+});
+
+}
+
+/* UPDATE STATS */
+
+function updateStats(reports){
+
+document.getElementById("totalReports").textContent=reports.length;
+
+const diseases=new Set();
+const locations=new Set();
+
+reports.forEach(r=>{
+diseases.add(r.disease);
+locations.add(r.location);
+});
+
+document.getElementById("totalDiseases").textContent=diseases.size;
+document.getElementById("totalLocations").textContent=locations.size;
+
+}
+
+/* LOAD REPORTS */
+
+async function loadReports(){
+
+const res=await fetch('/reports');
+const data=await res.json();
+
+allReports=data;
+
+displayReports(data);
+
+populateFilter(data);
+
+updateStats(data);
+
+}
+
+loadReports();
+
+/* FILTER */
+
+document.getElementById("diseaseFilter")
+.addEventListener("change",()=>{
+
+const val=document.getElementById("diseaseFilter").value;
+
+if(val==="all"){
+displayReports(allReports);
+}else{
+
+const filtered=allReports.filter(r=>r.disease===val);
+
+displayReports(filtered);
+
+}
+
+});
+
+/* SEARCH LOCATION */
+
+document.getElementById("searchLocation")
+.addEventListener("keyup",function(){
+
+const val=this.value.toLowerCase();
+
+const filtered=allReports.filter(r=>
+r.location.toLowerCase().includes(val)
+);
+
+displayReports(filtered);
+
+});
+
+/* AUTO REFRESH */
+
+setInterval(loadReports,10000);
 
 </script>
 
