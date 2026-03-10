@@ -1,5 +1,4 @@
 const API = window.location.origin;
-const API = window.location.origin;
 
 /* SIGNUP */
 
