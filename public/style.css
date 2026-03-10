@@ -345,3 +345,97 @@ transition:0.3s;
 .mapBtn:hover{
 transform:scale(1.05);
 }
+#diseaseFilter{
+
+margin:10px;
+padding:8px 12px;
+font-size:16px;
+border-radius:6px;
+border:1px solid #ccc;
+
+}
+/* -------- PAGE BACKGROUND -------- */
+
+body{
+margin:0;
+font-family: "Segoe UI", Arial, sans-serif;
+background: linear-gradient(135deg,#e8f0ff,#f9fcff);
+}
+
+/* -------- HEADER -------- */
+
+.header{
+background: linear-gradient(90deg,#1e3c72,#2a5298);
+color:white;
+padding:18px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+letter-spacing:1px;
+box-shadow:0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* -------- FILTER BAR -------- */
+
+.controls{
+background:white;
+margin:15px auto;
+width:90%;
+max-width:900px;
+padding:12px 18px;
+border-radius:10px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+/* -------- DROPDOWN -------- */
+
+#diseaseFilter{
+padding:8px 14px;
+font-size:15px;
+border-radius:6px;
+border:1px solid #ccc;
+outline:none;
+transition:0.3s;
+}
+
+#diseaseFilter:hover{
+border-color:#2a5298;
+}
+
+/* -------- MAP CONTAINER -------- */
+
+#map{
+height:75vh;
+width:90%;
+margin:auto;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* -------- POPUP STYLE -------- */
+
+.leaflet-popup-content{
+font-size:14px;
+line-height:1.5;
+}
+
+/* -------- ANIMATION -------- */
+
+#map{
+animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
