@@ -2,20 +2,25 @@
 
 async function signup(){
 
-let data={
-username:username.value,
-password:password.value,
-role:role.value
-}
+const username = document.getElementById("username").value
+const password = document.getElementById("password").value
 
-await fetch("/signup",{
+const res = await fetch(API + "/signup",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({username,password})
 })
 
-alert("Signup Successful")
-location.href="login.html"
+const data = await res.json()
+
+if(data.status){
+alert("Signup successful")
+window.location="login.html"
+}else{
+alert("Signup failed")
+}
 
 }
 
