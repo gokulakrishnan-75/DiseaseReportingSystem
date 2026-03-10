@@ -13,29 +13,40 @@ font-family:'Poppins',sans-serif;
 
 body{
 min-height:100vh;
-background:linear-gradient(135deg,#4facfe,#00f2fe);
+background:linear-gradient(135deg,#4facfe,#00f2fe,#43e97b);
 display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
+animation:bgMove 12s infinite alternate;
+}
+
+/* Background animation */
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
 }
 
 /* ================= CONTAINERS ================= */
 
 .container,
-.home-container{
+.home-container,
+.auth-container{
+
 width:100%;
 max-width:420px;
 padding:40px;
 border-radius:18px;
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(12px);
-box-shadow:0 10px 35px rgba(0,0,0,0.25);
+background:rgba(255,255,255,0.2);
+backdrop-filter:blur(14px);
+box-shadow:0 12px 35px rgba(0,0,0,0.25);
 text-align:center;
 animation:fadeIn 0.8s ease;
+
 }
 
-/* HOME PAGE */
+/* Home page wider */
 
 .home-container{
 max-width:600px;
@@ -44,14 +55,18 @@ max-width:600px;
 /* ================= HEADINGS ================= */
 
 h1,h2{
+
 color:white;
 margin-bottom:20px;
 letter-spacing:1px;
+font-weight:600;
+
 }
 
-/* ================= INPUTS ================= */
+/* ================= INPUT FIELDS ================= */
 
 input,select{
+
 width:100%;
 padding:12px 14px;
 margin:10px 0;
@@ -60,166 +75,219 @@ border-radius:10px;
 outline:none;
 font-size:15px;
 background:white;
-box-shadow:0 2px 6px rgba(0,0,0,0.15);
+box-shadow:0 3px 8px rgba(0,0,0,0.15);
 transition:0.3s;
+
 }
 
 input:focus,select:focus{
-transform:scale(1.02);
-box-shadow:0 0 10px rgba(0,0,0,0.25);
+
+transform:scale(1.03);
+box-shadow:0 0 12px rgba(0,0,0,0.25);
+
 }
+
 input[type="tel"]{
+
 letter-spacing:1px;
 font-weight:500;
+
 }
 
 /* ================= BUTTONS ================= */
 
 button,
 .btn{
+
 width:100%;
 padding:12px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:linear-gradient(45deg,#36d1dc,#5b86e5);
 color:white;
 font-size:15px;
 font-weight:500;
 cursor:pointer;
-transition:0.3s;
+transition:all 0.3s ease;
+
 }
 
 button:hover,
 .btn:hover{
-transform:translateY(-3px);
-box-shadow:0 6px 18px rgba(0,0,0,0.3);
+
+transform:translateY(-4px) scale(1.02);
+box-shadow:0 8px 22px rgba(0,0,0,0.3);
+
 }
 
-/* LOGIN & SIGNUP BUTTON COLORS */
+/* LOGIN BUTTON */
 
 .login-btn{
+
 background:linear-gradient(45deg,#36d1dc,#5b86e5);
+
 }
 
+/* SIGNUP BUTTON */
+
 .signup-btn{
+
 background:linear-gradient(45deg,#ff7eb3,#ff758c);
+
 }
 
 /* ================= LINKS ================= */
 
 a{
+
 color:white;
 text-decoration:none;
 font-weight:500;
 display:block;
 margin-top:10px;
+
 }
 
 a:hover{
+
 text-decoration:underline;
+
 }
 
 /* ================= HOME BUTTONS ================= */
 
 .home-buttons{
+
 display:flex;
 justify-content:center;
 gap:20px;
 flex-wrap:wrap;
+
 }
 
 /* ================= ADMIN DASHBOARD ================= */
 
 .admin-container{
+
 width:95%;
 max-width:1100px;
 margin:auto;
 padding:40px;
-background:rgba(255,255,255,0.15);
+background:rgba(255,255,255,0.18);
 backdrop-filter:blur(15px);
 border-radius:20px;
-box-shadow:0 10px 35px rgba(0,0,0,0.25);
+box-shadow:0 12px 40px rgba(0,0,0,0.25);
 animation:fadeIn 0.8s ease;
+
 }
 
 .admin-container h1{
+
 text-align:center;
 color:white;
 margin-bottom:30px;
+
 }
 
-/* ================= ADMIN BUTTONS ================= */
+/* ================= ADMIN CONTROL BUTTONS ================= */
 
 .admin-controls{
+
 display:flex;
 gap:15px;
 justify-content:center;
 margin-bottom:25px;
 flex-wrap:wrap;
+
 }
 
 .admin-controls button{
+
 padding:12px 20px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 background:linear-gradient(45deg,#36d1dc,#5b86e5);
 color:white;
 cursor:pointer;
 transition:0.3s;
+
 }
 
 .admin-controls button:hover{
-transform:translateY(-2px);
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
+
+transform:translateY(-3px);
+box-shadow:0 6px 18px rgba(0,0,0,0.35);
+
+}
+
+/* MAP BUTTON */
+
+.map-btn{
+
+background:linear-gradient(45deg,#ff512f,#dd2476);
+
 }
 
 /* ================= TABLE ================= */
 
 .table-container{
+
 overflow-x:auto;
+
 }
 
 .report-table{
+
 width:100%;
+min-width:750px;
 border-collapse:collapse;
 background:white;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
-box-shadow:0 6px 25px rgba(0,0,0,0.2);
+box-shadow:0 8px 30px rgba(0,0,0,0.2);
+
 }
 
 .report-table th{
+
 background:linear-gradient(45deg,#36d1dc,#5b86e5);
 color:white;
 padding:14px;
 text-align:center;
 font-weight:600;
-letter-spacing:0.5px;
+
 }
 
 .report-table td{
+
 padding:12px;
 text-align:center;
 border-bottom:1px solid #eee;
 font-size:14px;
+
 }
 
-/* Zebra Rows */
+/* Zebra rows */
 
 .report-table tr:nth-child(even){
+
 background:#f7f7f7;
+
 }
 
-/* Hover Effect */
+/* Hover effect */
 
 .report-table tr:hover{
+
 background:#e6f7ff;
 transition:0.2s;
+
 }
 
 /* ================= DELETE BUTTON ================= */
 
 .delete-btn{
+
 background:#ff4d4d;
 color:white;
 border:none;
@@ -228,16 +296,61 @@ border-radius:6px;
 cursor:pointer;
 font-size:14px;
 transition:0.3s;
+
 }
 
 .delete-btn:hover{
+
 background:#cc0000;
 transform:scale(1.05);
-}
-/* ================= MAP BUTTON ================= */
 
-.map-btn{
-background:linear-gradient(45deg,#ff512f,#dd2476);
+}
+
+/* ================= MAP PAGE ================= */
+
+#map{
+
+height:75vh;
+width:95%;
+margin:auto;
+border-radius:15px;
+box-shadow:0 10px 35px rgba(0,0,0,0.3);
+
+}
+
+/* MAP FILTER */
+
+#diseaseFilter{
+
+margin:15px;
+padding:10px 14px;
+font-size:15px;
+border-radius:8px;
+border:none;
+box-shadow:0 3px 10px rgba(0,0,0,0.2);
+
+}
+
+/* ================= BUTTON SPECIAL ================= */
+
+.mapBtn{
+
+padding:12px 25px;
+background:linear-gradient(45deg,#ff4b2b,#ff416c);
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.mapBtn:hover{
+
+transform:scale(1.05);
+box-shadow:0 6px 20px rgba(0,0,0,0.3);
+
 }
 
 /* ================= ANIMATIONS ================= */
@@ -255,93 +368,28 @@ transform:translateY(0);
 }
 
 }
-.table-container{
-overflow-x:auto;
-}
 
-.report-table{
-min-width:750px;
-}
+/* ================= MOBILE ================= */
 
 @media(max-width:768px){
 
 .admin-container{
+
 width:95%;
 padding:20px;
+
 }
 
 .home-container{
+
 width:90%;
+
 }
 
 .report-table{
+
 font-size:13px;
-}
 
 }
-body{
-font-family:Arial;
-background:linear-gradient(135deg,#4facfe,#00f2fe);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
 
-.auth-container{
-background:white;
-padding:40px;
-border-radius:10px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-width:320px;
-text-align:center;
-}
-
-.auth-container h2{
-margin-bottom:20px;
-color:#333;
-}
-
-.auth-container input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-.auth-container button{
-width:100%;
-padding:12px;
-background:#4facfe;
-border:none;
-color:white;
-font-size:16px;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.auth-container button:hover{
-background:#007bff;
-}
-
-.auth-container a{
-text-decoration:none;
-color:#007bff;
-}
-.mapBtn{
-padding:12px 25px;
-background:linear-gradient(45deg,#ff4b2b,#ff416c);
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.mapBtn:hover{
-transform:scale(1.05);
 }
