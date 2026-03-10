@@ -17,12 +17,9 @@ app.use(express.static(path.join(__dirname, "public")))
 
 /* ---------------- MONGODB CONNECTION ---------------- */
 
-mongoose.connect(process.env.MONGO_URI, {
-useNewUrlParser: true,
-useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log("MongoDB Error:", err))
+mongoose.connect("mongodb+srv://gokul:gokul6494@cluster0.d9blo36.mongodb.net/diseaseDB?retryWrites=true&w=majority")
+.then(()=>console.log("MongoDB Connected"))
+.catch(err=>console.log(err))
 
 /* ---------------- DATABASE MODELS ---------------- */
 
