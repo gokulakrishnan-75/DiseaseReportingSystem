@@ -735,18 +735,89 @@ height:350px;
 }
 
 }
-<nav class="navbar">
+/* ================= NAVBAR ================= */
 
-<h2>Disease Monitor</h2>
+.navbar {
 
-<div>
+display: flex;
+justify-content: space-between;
+align-items: center;
 
-<a href="index.html">Home</a>
-<a href="report.html">Report</a>
-<a href="admin.html">Admin</a>
-<a href="admin-map.html">Map</a>
-<a href="analytics.html">Analytics</a>
+background: #2c3e50;
+color: white;
 
-</div>
+padding: 15px 40px;
 
-</nav>
+position: sticky;
+top: 0;
+
+z-index: 1000;
+
+}
+
+/* LOGO / TITLE */
+
+.navbar h2 {
+
+margin: 0;
+font-size: 22px;
+font-weight: 600;
+
+}
+
+/* NAV LINKS CONTAINER */
+
+.nav-links {
+
+display: flex;
+gap: 20px;
+
+}
+
+/* NAV LINKS */
+
+.nav-links a {
+
+color: white;
+text-decoration: none;
+font-size: 16px;
+font-weight: 500;
+
+transition: 0.3s;
+
+}
+
+/* HOVER EFFECT */
+
+.nav-links a:hover {
+
+color: #00f2fe;
+
+}
+
+/* ================= MOBILE VIEW ================= */
+
+@media (max-width:768px){
+
+.navbar{
+
+flex-direction: column;
+align-items: flex-start;
+gap: 10px;
+
+}
+
+.nav-links{
+
+flex-direction: column;
+width: 100%;
+
+}
+
+.nav-links a{
+
+padding: 8px 0;
+
+}
+
+}
