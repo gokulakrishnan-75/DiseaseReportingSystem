@@ -491,3 +491,197 @@ margin:auto;
 border-radius:12px;
 box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
+/* ================= GLOBAL RESPONSIVE DESIGN ================= */
+
+/* Make containers flexible */
+
+.container,
+.home-container,
+.auth-container,
+.admin-container{
+
+width:90%;
+max-width:1100px;
+margin:auto;
+
+}
+
+/* Inputs responsive */
+
+input,
+select,
+button{
+
+width:100%;
+
+}
+
+/* Table responsive */
+
+.table-container{
+
+width:100%;
+overflow-x:auto;
+
+}
+
+/* ================= TABLET VIEW ================= */
+
+@media (max-width:1024px){
+
+.home-container{
+max-width:500px;
+}
+
+.container{
+max-width:450px;
+}
+
+.admin-container{
+width:95%;
+padding:25px;
+}
+
+.stats{
+flex-wrap:wrap;
+}
+
+.card{
+flex:1 1 200px;
+}
+
+}
+
+/* ================= MOBILE VIEW ================= */
+
+@media (max-width:768px){
+
+body{
+padding:10px;
+}
+
+/* Containers */
+
+.container,
+.home-container,
+.auth-container{
+
+width:95%;
+padding:25px;
+
+}
+
+/* Admin dashboard */
+
+.admin-container{
+
+width:95%;
+padding:20px;
+
+}
+
+/* Buttons stack */
+
+.home-buttons{
+
+flex-direction:column;
+gap:12px;
+
+}
+
+/* Admin controls */
+
+.admin-controls{
+
+flex-direction:column;
+gap:10px;
+
+}
+
+.admin-controls button{
+
+width:100%;
+
+}
+
+/* Stats cards */
+
+.stats{
+
+flex-direction:column;
+align-items:center;
+
+}
+
+.card{
+
+width:90%;
+max-width:350px;
+
+}
+
+/* Tables smaller */
+
+.report-table{
+
+font-size:13px;
+
+}
+
+/* Map responsive */
+
+#map{
+
+height:420px;
+width:95%;
+
+}
+
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width:480px){
+
+h1{
+font-size:22px;
+}
+
+h2{
+font-size:20px;
+}
+
+.container,
+.home-container{
+
+padding:20px;
+
+}
+
+input,
+select,
+button{
+
+font-size:14px;
+
+}
+
+/* Table text smaller */
+
+.report-table td,
+.report-table th{
+
+font-size:12px;
+padding:8px;
+
+}
+
+/* Map smaller */
+
+#map{
+
+height:350px;
+
+}
+
+}
