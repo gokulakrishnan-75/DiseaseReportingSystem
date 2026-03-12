@@ -1,60 +1,101 @@
-<div class="dashboard">
+<!DOCTYPE html>
+<html>
 
-<div class="sidebar">
+<head>
 
-<h2>HealthCare</h2>
+<title>Admin Dashboard</title>
 
-<ul>
-<li><a href="admin_dashboard.html">Dashboard</a></li>
-<li><a href="admin-map.html">Disease Map</a></li>
-<li><a href="analytics.html">Analytics</a></li>
-<li><a href="index.html">Logout</a></li>
-</ul>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+</head>
+
+<body>
+<nav class="navbar">
+
+<h2>Disease Monitor</h2>
+
+<div>
+
+<a href="index.html">Home</a>
+<a href="report.html">Report</a>
+<a href="admin.html">Admin</a>
+<a href="admin-map.html">Map</a>
+<a href="analytics.html">Analytics</a>
 
 </div>
 
-<div class="main">
+</nav>
+<div class="admin-container">
 
-<div class="topbar">
-<h2>Admin Dashboard</h2>
+<h1>Admin Dashboard</h1>
+
+<div class="admin-controls">
+
+<button onclick="loadReports()">Load Reports</button>
+<button onclick="deleteSelected()">Delete Selected</button>
+<button onclick="downloadReports()">Download Excel</button>
+<button onclick="loadAnalytics()">Show Analytics</button>
+
 </div>
 
-<div class="cards">
+<div class="table-container">
 
-<div class="card">
-<h3>Total Reports</h3>
-<p id="totalReports">0</p>
-</div>
+<table class="report-table">
 
-<div class="card">
-<h3>Disease Types</h3>
-<p id="totalDiseases">0</p>
-</div>
+<thead>
 
-<div class="card">
-<h3>Locations</h3>
-<p id="totalLocations">0</p>
-</div>
+<tr>
+<th>Select</th>
+<th>Name</th>
+<th>Age</th>
+<th>Phone</th>
+<th>Disease</th>
+<th>Location</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="reports">
+
+</tbody>
+
+</table>
+<br>
+<br>
+<a href="/admin-map.html">
+<button class="mapBtn">View Disease Map</button>
+</a>
+
+<script>
+function openMap(){
+window.location.href="/admin-map.html"
+}
+</script>
 
 </div>
 
 <br>
 
-<table class="report-table">
-
-<thead>
-<tr>
-<th>Name</th>
-<th>Disease</th>
-<th>Location</th>
-<th>Date</th>
-</tr>
-</thead>
-
-<tbody id="reportTable"></tbody>
-
-</table>
+<canvas id="chart"></canvas>
 
 </div>
 
-</div>
+
+<script>
+
+</script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
