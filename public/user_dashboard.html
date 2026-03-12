@@ -1,19 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Dashboard</title>
 <link rel="stylesheet" href="style.css">
+</head>
 
-<div class="dashboard">
+<body>
+<nav class="navbar">
 
-<h2>Disease Reporting</h2>
+<h2>Disease Monitor</h2>
 
-<input id="name" placeholder="Name">
-<input id="age" placeholder="Age">
-<input type="tel" id="phone" placeholder="Phone Number" required>
-<input id="disease" placeholder="Disease">
-<input id="location" placeholder="Location">
-<input id="date" type="date">
+<div>
 
-<input type="hidden" id="lat">
-<input type="hidden" id="lng">
-<button onclick="reportDisease()">Submit Report</button>
+<a href="index.html">Home</a>
+<a href="report.html">Report</a>
+<a href="admin.html">Admin</a>
+<a href="admin-map.html">Map</a>
+<a href="analytics.html">Analytics</a>
 
 </div>
-<script src="script.js"></script>
+
+</nav>
+<h2>Your Submitted Reports</h2>
+
+<table border="1">
+<thead>
+<tr>
+<th>Disease</th>
+<th>Location</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+<script>
+
+const phone = localStorage.getItem("phone")
+
+fetch("/userReports/"+phone)
+.then(res=>res.json())
+.then(data=>{
+
+let rows=""
+
+data.forEach(r=>{
+rows += `
+<tr>
+<td>${r.disease}</td>
+<td>${r.location}</td>
+<td>${r.date}</td>
+</tr>
+`
+})
+
+document.getElementById("table").innerHTML = rows
+
+})
+
+</script>
+
+</body>
+</html>

@@ -1,37 +1,61 @@
-<h2>Disease Analytics</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Disease Analytics</title>
 
-<button onclick="loadAnalytics()">Show Analytics</button>
-
-<ul id="analytics"></ul>
-<h2>Disease Analytics</h2>
-
-<canvas id="diseaseChart"></canvas>
-<script src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+<nav class="navbar">
+
+<h2>Disease Monitor</h2>
+
+<div>
+
+<a href="index.html">Home</a>
+<a href="report.html">Report</a>
+<a href="admin.html">Admin</a>
+<a href="admin-map.html">Map</a>
+<a href="analytics.html">Analytics</a>
+
+</div>
+
+</nav>
+<h2 style="text-align:center;">Disease Analytics Dashboard</h2>
+
+<canvas id="diseaseChart" width="400" height="200"></canvas>
 
 <script>
 
-fetch("/analytics")
-.then(res=>res.json())
-.then(data=>{
+async function loadAnalytics(){
 
-let labels = data.map(d=>d._id)
-let values = data.map(d=>d.count)
+const res = await fetch('/analytics')
+const data = await res.json()
 
-const ctx = document.getElementById("diseaseChart")
+const labels = data.map(d=>d._id)
+const counts = data.map(d=>d.count)
+
+const ctx = document.getElementById('diseaseChart')
 
 new Chart(ctx,{
-type:"bar",
+type:'bar',
 data:{
 labels:labels,
 datasets:[{
-label:"Number of Cases",
-data:values,
-borderWidth:1
+label:'Disease Reports',
+data:counts
 }]
 }
 })
 
-})
+}
+
+loadAnalytics()
 
 </script>
+
+</body>
+</html>

@@ -270,3 +270,10 @@ const PORT=process.env.PORT || 3000
 app.listen(PORT,()=>{
 console.log("Server running on port "+PORT)
 })
+app.get("/userReports/:phone",async(req,res)=>{
+
+const reports = await Report.find({phone:req.params.phone})
+
+res.json(reports)
+
+})
