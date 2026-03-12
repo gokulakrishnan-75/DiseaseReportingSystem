@@ -1,61 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Disease Analytics</title>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="style.css">
+<div class="dashboard">
 
-</head>
+<div class="sidebar">
 
-<body>
-<nav class="navbar">
+<h2>Analytics</h2>
 
-<h2>Disease Monitor</h2>
-
-<div>
-
-<a href="index.html">Home</a>
-<a href="report.html">Report</a>
-<a href="admin.html">Admin</a>
-<a href="admin-map.html">Map</a>
-<a href="analytics.html">Analytics</a>
+<ul>
+<li><a href="admin_dashboard.html">Dashboard</a></li>
+<li><a href="admin-map.html">Map</a></li>
+<li><a href="analytics.html">Analytics</a></li>
+</ul>
 
 </div>
 
-</nav>
-<h2 style="text-align:center;">Disease Analytics Dashboard</h2>
+<div class="main">
 
-<canvas id="diseaseChart" width="400" height="200"></canvas>
+<h2>Disease Analytics</h2>
 
-<script>
+<canvas id="chart"></canvas>
 
-async function loadAnalytics(){
+</div>
 
-const res = await fetch('/analytics')
-const data = await res.json()
-
-const labels = data.map(d=>d._id)
-const counts = data.map(d=>d.count)
-
-const ctx = document.getElementById('diseaseChart')
-
-new Chart(ctx,{
-type:'bar',
-data:{
-labels:labels,
-datasets:[{
-label:'Disease Reports',
-data:counts
-}]
-}
-})
-
-}
-
-loadAnalytics()
-
-</script>
-
-</body>
-</html>
+</div>

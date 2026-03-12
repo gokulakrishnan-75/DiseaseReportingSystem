@@ -1,6 +1,8 @@
-const API = window.location.origin;
+/* ================= API URL ================= */
 
-/* SIGNUP */
+const API = window.location.origin
+
+/* ================= SIGNUP ================= */
 
 async function signup(){
 
@@ -12,22 +14,25 @@ method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body:JSON.stringify({username,password})
+body:JSON.stringify({
+username,
+password
+})
 })
 
 const data = await res.json()
 
 if(data.status){
-alert("Signup Successful")
+alert("Signup successful")
 window.location="login.html"
-}else{
-alert("Signup Failed")
+}
+else{
+alert(data.message || "Signup failed")
 }
 
 }
 
-
-/* LOGIN */
+/* ================= LOGIN ================= */
 
 async function login(){
 
@@ -39,7 +44,10 @@ method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body:JSON.stringify({username,password})
+body:JSON.stringify({
+username,
+password
+})
 })
 
 const data = await res.json()
@@ -48,62 +56,130 @@ if(data.status){
 
 if(data.role==="admin"){
 window.location="admin_dashboard.html"
-}else{
+}
+
+else{
 window.location="user_dashboard.html"
 }
 
-}else{
-alert("Invalid login")
+}
+
+else{
+alert("Invalid Login")
 }
 
 }
 
+/* ================= REPORT DISEASE ================= */
 
-/* ---------------- REPORT DISEASE ---------------- */
+async function submitReport(){
 
-async function reportDisease(){
+navigator.geolocation.getCurrentPosition(async pos=>{
 
-let data = {
-name: document.getElementById("name").value,
-age: document.getElementById("age").value,
-phone: document.getElementById("phone").value,
-disease: document.getElementById("disease").value,
-location: document.getElementById("location").value,
-date: document.getElementById("date").value,
-lat: document.getElementById("lat").value,
-lng: document.getElementById("lng").value
+const lat = pos.coords.latitude
+const lng = pos.coords.longitude
+
+const report = {
+
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+age:document.getElementById("age").value,
+disease:document.getElementById("disease").value,
+location:document.getElementById("location").value,
+date:new Date().toLocaleDateString(),
+lat,
+lng
+
 }
 
-let res = await fetch("/report",{
+const res = await fetch(API + "/report",{
+
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(report)
+
 })
 
-let result = await res.json()
+const data = await res.json()
 
-if(result.status){
+alert(data.status)
 
-alert("Report Submitted Successfully")
-
-}else{
-
-alert("Error submitting report")
+})
 
 }
 
+/* ================= ADMIN DASHBOARD ================= */
+
+async function loadDashboard(){
+
+const res = await fetch(API + "/reports")
+const data = await res.json()
+
+const table = document.getElementById("reportTable")
+
+if(!table) return
+
+table.innerHTML=""
+
+let diseases = new Set()
+let locations = new Set()
+
+data.forEach(r=>{
+
+diseases.add(r.disease)
+locations.add(r.location)
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${r.name}</td>
+<td>${r.disease}</td>
+<td>${r.location}</td>
+<td>${r.date}</td>
+
+<td>
+<button class="delete-btn" onclick="deleteReport('${r._id}')">
+Delete
+</button>
+</td>
+
+</tr>
+
+`
+
+})
+
+document.getElementById("totalReports").innerText=data.length
+document.getElementById("totalDiseases").innerText=diseases.size
+document.getElementById("totalLocations").innerText=locations.size
+
 }
 
+/* ================= DELETE REPORT ================= */
 
-/* ---------------- LOAD REPORTS ---------------- */
+async function deleteReport(id){
 
-async function loadReports(){
+if(!confirm("Delete this report?")) return
 
-let res = await fetch("/reports")
+await fetch(API + "/deleteReport/"+id,{
+method:"DELETE"
+})
 
-let data = await res.json()
+location.reload()
 
-let table = document.getElementById("reports")
+}
+
+/* ================= USER DASHBOARD ================= */
+
+async function loadUserReports(){
+
+const res = await fetch(API + "/reports")
+const data = await res.json()
+
+const table = document.getElementById("userTable")
 
 if(!table) return
 
@@ -111,109 +187,126 @@ table.innerHTML=""
 
 data.forEach(r=>{
 
-let row = `
+table.innerHTML+=`
+
 <tr>
 
-<td><input type="checkbox" class="selectReport" value="${r._id}"></td>
-
-<td>${r.name}</td>
-<td>${r.age}</td>
-<td>${r.phone}</td>
 <td>${r.disease}</td>
 <td>${r.location}</td>
 <td>${r.date}</td>
 
-<td>
-<button onclick="deleteReport('${r._id}')">Delete</button>
-</td>
-
 </tr>
+
 `
 
-table.innerHTML += row
+})
+
+}
+
+/* ================= MAP ================= */
+
+async function loadMap(){
+
+if(!document.getElementById("map")) return
+
+const res = await fetch(API + "/reports")
+const reports = await res.json()
+
+const map = L.map('map').setView([20.5937,78.9629],5)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:19
+}).addTo(map)
+
+let markers=[]
+
+reports.forEach(r=>{
+
+if(r.lat && r.lng){
+
+const marker = L.marker([r.lat,r.lng])
+.addTo(map)
+.bindPopup(`
+<b>Disease:</b> ${r.disease}<br>
+<b>Location:</b> ${r.location}<br>
+<b>Date:</b> ${r.date}
+`)
+
+markers.push({
+disease:r.disease,
+marker
+})
+
+}
+
+})
+
+/* ===== DISEASE FILTER ===== */
+
+const filter = document.getElementById("diseaseFilter")
+
+if(filter){
+
+const diseases=[...new Set(reports.map(r=>r.disease))]
+
+diseases.forEach(d=>{
+
+const option=document.createElement("option")
+option.value=d
+option.textContent=d
+filter.appendChild(option)
+
+})
+
+filter.addEventListener("change",()=>{
+
+const value=filter.value
+
+markers.forEach(m=>{
+
+if(value==="all" || m.disease===value){
+
+map.addLayer(m.marker)
+
+}else{
+
+map.removeLayer(m.marker)
+
+}
+
+})
 
 })
 
 }
 
-
-/* ---------------- DELETE REPORT ---------------- */
-
-async function deleteReport(id){
-
-if(confirm("Delete this report?")){
-
-await fetch("/deleteReport/"+id,{
-method:"DELETE"
-})
-
-loadReports()
-
 }
 
-}
-
-
-/* ---------------- BULK DELETE ---------------- */
-
-async function deleteSelected(){
-
-let checkboxes = document.querySelectorAll(".selectReport:checked")
-
-let ids=[]
-
-checkboxes.forEach(cb=>{
-ids.push(cb.value)
-})
-
-await fetch("/bulkDelete",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({ids})
-
-})
-
-alert("Selected Reports Deleted")
-
-loadReports()
-
-}
-
-
-/* ---------------- DOWNLOAD CSV ---------------- */
-
-function downloadReports(){
-
-window.location="/download"
-
-}
-
-
-/* ---------------- ANALYTICS CHART ---------------- */
+/* ================= ANALYTICS ================= */
 
 async function loadAnalytics(){
 
-let res = await fetch("/analytics")
+const canvas=document.getElementById("chart")
 
-let data = await res.json()
+if(!canvas) return
 
-let labels = data.map(d=>d._id)
-let values = data.map(d=>d.count)
+const res = await fetch(API + "/analytics")
+const data = await res.json()
 
-new Chart(document.getElementById("chart"),{
+const labels = data.map(d=>d._id)
+const counts = data.map(d=>d.count)
+
+new Chart(canvas,{
 
 type:"bar",
 
 data:{
 labels:labels,
 datasets:[{
+
 label:"Disease Reports",
-data:values
+data:counts
+
 }]
 }
 
@@ -221,71 +314,13 @@ data:values
 
 }
 
+/* ================= AUTO LOAD ================= */
 
-/* ---------------- HEATMAP ---------------- */
+window.onload=()=>{
 
-async function loadHeatmap(){
-
-let res = await fetch("/reports")
-
-let reports = await res.json()
-
-let map = L.map('map').setView([20.5937,78.9629],5)
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:19
-}).addTo(map)
-
-let heatPoints=[]
-
-reports.forEach(r=>{
-
-if(r.lat && r.lng){
-
-heatPoints.push([r.lat,r.lng,0.5])
-
-}
-
-})
-
-L.heatLayer(heatPoints,{
-radius:25,
-blur:15,
-maxZoom:10
-}).addTo(map)
-
-}
-
-
-/* ---------------- GPS LOCATION ---------------- */
-
-if(navigator.geolocation){
-
-navigator.geolocation.getCurrentPosition(function(position){
-
-let latField = document.getElementById("lat")
-let lngField = document.getElementById("lng")
-
-if(latField && lngField){
-
-latField.value = position.coords.latitude
-lngField.value = position.coords.longitude
-
-}
-
-})
-
-}
-
-
-/* ---------------- PAGE LOAD ---------------- */
-
-window.onload=function(){
-
-loadReports()
-
-if(document.getElementById("map")){
-loadHeatmap()
-}
+loadDashboard()
+loadUserReports()
+loadMap()
+loadAnalytics()
 
 }

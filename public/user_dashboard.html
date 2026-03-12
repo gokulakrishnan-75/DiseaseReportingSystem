@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>User Dashboard</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<div class="dashboard">
 
-<body>
-<nav class="navbar">
+<div class="sidebar">
 
-<h2>Disease Monitor</h2>
+<h2>User Panel</h2>
 
-<div>
-
-<a href="index.html">Home</a>
-<a href="report.html">Report</a>
-<a href="admin.html">Admin</a>
-<a href="admin-map.html">Map</a>
-<a href="analytics.html">Analytics</a>
+<ul>
+<li><a href="user_dashboard.html">Dashboard</a></li>
+<li><a href="report.html">Report Disease</a></li>
+<li><a href="index.html">Logout</a></li>
+</ul>
 
 </div>
 
-</nav>
-<h2>Your Submitted Reports</h2>
+<div class="main">
 
-<table border="1">
+<h2>Your Reports</h2>
+
+<table class="report-table">
+
 <thead>
 <tr>
 <th>Disease</th>
@@ -32,35 +26,10 @@
 </tr>
 </thead>
 
-<tbody id="table"></tbody>
+<tbody id="userTable"></tbody>
 
 </table>
 
-<script>
+</div>
 
-const phone = localStorage.getItem("phone")
-
-fetch("/userReports/"+phone)
-.then(res=>res.json())
-.then(data=>{
-
-let rows=""
-
-data.forEach(r=>{
-rows += `
-<tr>
-<td>${r.disease}</td>
-<td>${r.location}</td>
-<td>${r.date}</td>
-</tr>
-`
-})
-
-document.getElementById("table").innerHTML = rows
-
-})
-
-</script>
-
-</body>
-</html>
+</div>
