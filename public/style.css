@@ -400,6 +400,56 @@ margin:0;
 font-family:'Poppins',sans-serif;
 background:linear-gradient(135deg,#4facfe,#00f2fe);
 }
+/* ===== ADMIN MAP CONTROLS ===== */
+
+.map-controls{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:12px;
+margin:25px 0;
+
+}
+
+.map-controls label{
+
+color:white;
+font-size:16px;
+font-weight:500;
+
+}
+
+.map-controls select{
+
+padding:10px 16px;
+border:none;
+border-radius:8px;
+font-size:15px;
+background:white;
+box-shadow:0 4px 12px rgba(0,0,0,0.2);
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.map-controls select:hover{
+
+transform:scale(1.03);
+
+}
+
+/* ===== MAP CONTAINER ===== */
+
+#map{
+
+width:92%;
+height:520px;
+margin:auto;
+border-radius:15px;
+box-shadow:0 12px 35px rgba(0,0,0,0.3);
+
+}
 
 /* HEADER */
 
