@@ -4,166 +4,65 @@
 <title>Admin Dashboard</title>
 
 <style>
+
+/* ===== GLOBAL ===== */
 body{
 margin:0;
 font-family:'Segoe UI';
-background:#f1f5f9;
-}
-
-.container{display:flex;}
-
-.sidebar{
-width:230px;
-height:100vh;
 background:#0f172a;
 color:white;
-padding:20px;
+transition:0.3s;
 }
 
-.sidebar button{
-width:100%;
-margin:10px 0;
-padding:12px;
-background:#1e293b;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
+/* ===== LAYOUT ===== */
+.container{
+display:flex;
 }
 
-.sidebar button:hover{
-background:#3b82f6;
-}
-
-.main{
-flex:1;
-padding:20px;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
-}
-
-.section{
-margin-top:20px;
-background:white;
-padding:20px;
-border-radius:10px;
-}
+/* ===== SIDEBAR ===== */
 .sidebar{
 width:240px;
 height:100vh;
-background:#0f172a;
-color:white;
+background:#020617;
+padding:15px;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
-padding:20px;
-}
-
-.menu button{
-width:100%;
-padding:12px;
-margin:8px 0;
-background:#1e293b;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-text-align:left;
-transition:0.3s;
-}
-
-.menu button:hover{
-background:#3b82f6;
-}
-
-/* LOGOUT SECTION */
-.logout-section{
-margin-top:auto;
-}
-
-.logout-section button{
-width:100%;
-padding:12px;
-background:#ef4444;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-transition:0.3s;
-}
-
-.logout-section button:hover{
-background:#dc2626;
-}
-/* SIDEBAR */
-.sidebar{
-width:260px;
-height:100vh;
-background:#0f172a;
-color:white;
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-padding:20px;
-transition:0.3s;
-}
-
-/* PROFILE */
-.profile{
-display:flex;
-align-items:center;
-gap:10px;
-margin-bottom:20px;
-}
-
-.avatar{
-width:40px;
-height:40px;
-border-radius:50%;
-background:#3b82f6;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
 }
 
 /* MENU */
+.menu{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
 .menu-btn{
-width:100%;
-padding:12px;
-margin:6px 0;
-background:transparent;
-color:white;
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 14px;
 border:none;
-border-radius:8px;
+border-radius:10px;
+background:#1e293b;
+color:#cbd5e1;
 cursor:pointer;
-text-align:left;
-transition:0.3s;
+transition:0.25s;
 }
 
 .menu-btn:hover{
-background:#1e293b;
+background:#334155;
+color:white;
+transform:translateX(4px);
 }
 
-/* ACTIVE MENU */
 .menu-btn.active{
-background:#3b82f6;
+background:linear-gradient(135deg,#3b82f6,#2563eb);
+color:white;
 }
 
 /* BOTTOM */
-.bottom-section{
+.bottom{
 display:flex;
 flex-direction:column;
 gap:10px;
@@ -187,8 +86,35 @@ border-radius:8px;
 cursor:pointer;
 }
 
-/* LIGHT MODE */
-.light-mode{
+/* ===== MAIN ===== */
+.main{
+flex:1;
+padding:20px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+}
+
+/* SECTIONS */
+.section{
+margin-top:20px;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+}
+
+/* ===== LIGHT MODE ===== */
+body.light-mode{
 background:#f1f5f9;
 color:black;
 }
@@ -199,6 +125,7 @@ color:black;
 }
 
 .light-mode .menu-btn{
+background:#e2e8f0;
 color:black;
 }
 
@@ -206,83 +133,31 @@ color:black;
 background:#2563eb;
 color:white;
 }
+
+.light-mode .card,
+.light-mode .section{
+background:white;
+color:black;
+}
+
+/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
 
 .sidebar{
 width:70px;
-padding:10px;
 }
 
-.profile h4,
-.profile p,
 .menu-btn{
-font-size:12px;
+justify-content:center;
+font-size:0;
+}
+
+.menu-btn span{
+font-size:20px;
 }
 
 }
-/* ===== DEFAULT (DARK MODE) ===== */
-body{
-background:#0f172a;
-color:white;
-transition:0.3s;
-}
 
-.main{
-background:#020617;
-min-height:100vh;
-padding:20px;
-}
-
-.card, .section, .table-wrapper{
-background:#1e293b;
-color:white;
-}
-
-/* ===== LIGHT MODE (FULL PAGE) ===== */
-body.light-mode{
-background:#f1f5f9;
-color:black;
-}
-
-.light-mode .main{
-background:#f1f5f9;
-}
-
-.light-mode .card,
-.light-mode .section,
-.light-mode .table-wrapper{
-background:white;
-color:black;
-}
-
-.light-mode table{
-background:white;
-color:black;
-}
-
-.light-mode th{
-background:#e2e8f0;
-}
-
-.light-mode td{
-color:black;
-}
-
-.light-mode input{
-background:white;
-color:black;
-border:1px solid #ccc;
-}
-
-/* Buttons */
-.light-mode .menu-btn{
-color:black;
-}
-
-.light-mode .menu-btn.active{
-background:#2563eb;
-color:white;
-}
 </style>
 </head>
 
@@ -290,32 +165,30 @@ color:white;
 
 <div class="container">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
 
-<!-- PROFILE -->
-<div class="profile">
-<div class="avatar">A</div>
-<div>
-<h4>Admin</h4>
-<p>admin@system</p>
-</div>
-</div>
-
-<!-- MENU -->
 <div class="menu">
 
-<button class="menu-btn active" onclick="navigate(this,'admin_dashboard.html')">🏠 Dashboard</button>
+<button class="menu-btn active" onclick="navigate(this,'admin_dashboard.html')">
+<span>🏠</span> Dashboard
+</button>
 
-<button class="menu-btn" onclick="navigate(this,'reports.html')">📋 Reports</button>
+<button class="menu-btn" onclick="navigate(this,'reports.html')">
+<span>📋</span> Reports
+</button>
 
-<button class="menu-btn" onclick="navigate(this,'analytics.html')">📊 Analytics</button>
+<button class="menu-btn" onclick="navigate(this,'analytics.html')">
+<span>📊</span> Analytics
+</button>
 
-<button class="menu-btn" onclick="navigate(this,'map.html')">🌍 Map</button>
+<button class="menu-btn" onclick="navigate(this,'map.html')">
+<span>🌍</span> Map
+</button>
 
 </div>
 
-<!-- BOTTOM -->
-<div class="bottom-section">
+<div class="bottom">
 
 <button class="toggle-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
 
@@ -325,52 +198,97 @@ color:white;
 
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
 <h1>Dashboard Overview</h1>
 
+<!-- CARDS -->
 <div class="cards">
-<div class="card"><h3 id="total">0</h3><p>Total Reports</p></div>
-<div class="card"><h3 id="today">0</h3><p>Today Cases</p></div>
-<div class="card"><h3 id="top">-</h3><p>Top Disease</p></div>
+
+<div class="card">
+<h2 id="total">0</h2>
+<p>Total Reports</p>
 </div>
 
+<div class="card">
+<h2 id="today">0</h2>
+<p>Today's Cases</p>
+</div>
+
+<div class="card">
+<h2 id="top">-</h2>
+<p>Top Disease</p>
+</div>
+
+</div>
+
+<!-- EXTRA CONTENT -->
 <div class="section">
 <h3>📌 System Overview</h3>
-<p>This system helps track disease outbreaks, monitor patient reports and analyze trends.</p>
-</div>
-
-<div class="section">
-<h3>🔔 Recent Activity</h3>
-<p>• New disease reported</p>
-<p>• Data exported</p>
-<p>• Admin accessed analytics</p>
+<p>This system helps track disease reports, monitor outbreaks, and analyze trends.</p>
 </div>
 
 <div class="section">
 <h3>📈 Insights</h3>
-<p>• Increase in seasonal diseases</p>
-<p>• High risk areas detected</p>
+<p>• Detect high-risk areas</p>
+<p>• Monitor disease spread</p>
+<p>• Improve healthcare response</p>
+</div>
+
+<div class="section">
+<h3>🔔 Recent Activity</h3>
+<p>• New reports submitted</p>
+<p>• Data analyzed</p>
+<p>• Admin accessed system</p>
 </div>
 
 </div>
 
 </div>
-
-<script src="script.js"></script>
 
 <script>
+
+/* NAVIGATION */
+function navigate(btn,page){
+document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+window.location=page
+}
+
+/* LOGOUT */
+function logout(){
+localStorage.clear()
+alert("Logged out successfully")
+window.location="login.html"
+}
+
+/* THEME */
+function toggleTheme(){
+let isLight=document.body.classList.toggle("light-mode")
+localStorage.setItem("theme",isLight?"light":"dark")
+}
+
+/* APPLY THEME */
+function applyTheme(){
+let theme=localStorage.getItem("theme")
+if(theme==="light"){
+document.body.classList.add("light-mode")
+}
+}
+
+/* LOAD DATA */
 async function loadDashboard(){
 
-let res = await fetch("/reports")
-let data = await res.json()
+let res=await fetch("/reports")
+let data=await res.json()
 
-let today = new Date().toLocaleDateString()
-let todayCount = 0
-let diseaseCount = {}
+let today=new Date().toLocaleDateString()
+let todayCount=0
+let diseaseCount={}
 
 data.forEach(r=>{
-if(new Date(r.date).toLocaleDateString() === today){
+if(new Date(r.date).toLocaleDateString()===today){
 todayCount++
 }
 diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
@@ -379,7 +297,7 @@ diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
 document.getElementById("total").innerText=data.length
 document.getElementById("today").innerText=todayCount
 
-let top="-", max=0
+let top="-",max=0
 for(let d in diseaseCount){
 if(diseaseCount[d]>max){
 max=diseaseCount[d]
@@ -390,7 +308,12 @@ document.getElementById("top").innerText=top
 
 }
 
-window.onload=loadDashboard
+/* LOAD ALL */
+window.addEventListener("load",function(){
+applyTheme()
+loadDashboard()
+})
+
 </script>
 
 </body>
