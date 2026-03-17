@@ -2,125 +2,297 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Dashboard</title>
 
-<!-- Responsive -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- CSS -->
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(120deg,#4facfe,#00f2fe);
     margin:0;
-    padding:0;
-}
-
-/* Container */
-.container{
-    width: 400px;
-    max-width: 90%;
-    margin: 50px auto;
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 8px 25px rgba(0,0,0,0.2);
-    animation: fadeIn 0.8s ease-in-out;
-}
-
-@keyframes fadeIn{
-    from{opacity:0; transform: translateY(20px);}
-    to{opacity:1; transform: translateY(0);}
-}
-
-h2{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-/* Inputs */
-input, button{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border-radius:6px;
-    border:1px solid #ccc;
-    font-size:14px;
-}
-
-/* Button */
-button{
-    background:#4facfe;
-    color:white;
-    border:none;
-    cursor:pointer;
-    font-weight:bold;
+    font-family: 'Segoe UI', sans-serif;
+    background:#f4f6f9;
     transition:0.3s;
 }
 
-button:hover{
-    background:#007bff;
-    transform: scale(1.03);
+/* DARK MODE */
+.dark{
+    background:#0f172a;
+    color:white;
 }
 
-/* Logout Button */
-.logout{
-    background:red;
+/* Layout */
+.dashboard{
+    display:flex;
 }
 
-.logout:hover{
-    background:darkred;
+/* Sidebar */
+.sidebar{
+    width:220px;
+    height:100vh;
+    background:#1e293b;
+    color:white;
+    padding:20px;
 }
 
-/* Small text */
-.note{
-    font-size:12px;
-    color:gray;
-    text-align:center;
+.sidebar a{
+    display:block;
+    color:#cbd5e1;
+    padding:10px;
+    text-decoration:none;
+}
+
+.sidebar a:hover{
+    background:#334155;
+}
+
+/* Main */
+.main{
+    flex:1;
+    padding:20px;
+}
+
+/* Cards */
+.cards{
+    display:flex;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    flex:1;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+.dark .card{
+    background:#1e293b;
+}
+
+/* Form */
+.form-card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.dark .form-card{
+    background:#1e293b;
+}
+
+input, button{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+}
+
+/* Table */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+.dark table{
+    background:#1e293b;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ccc;
+}
+
+/* Search */
+.search{
+    margin-bottom:10px;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="dashboard">
 
-<h2>🦠 Report Disease</h2>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Health System</h2>
+    <a onclick="showSection('dashboard')">📊 Dashboard</a>
+    <a onclick="showSection('report')">🦠 Report</a>
+    <a onclick="showSection('reports')">📄 My Reports</a>
+    <a onclick="showSection('profile')">👤 Profile</a>
+    <a onclick="toggleDark()">🌙 Dark Mode</a>
+    <a onclick="logout()">🚪 Logout</a>
+</div>
 
-<input type="text" id="name" placeholder="Full Name" required>
+<!-- Main -->
+<div class="main">
 
-<input type="number" id="age" placeholder="Age" required>
+<!-- DASHBOARD -->
+<div id="dashboardSection">
 
-<input type="text" id="phone" placeholder="Phone Number" required>
-
-<!-- USER INPUT DISEASE -->
-<input type="text" id="disease" placeholder="Enter Disease Name" required>
-
-<input type="text" id="location" placeholder="Location" required>
-
-<input type="date" id="date">
-
-<!-- Hidden GPS Fields -->
-<input type="hidden" id="lat">
-<input type="hidden" id="lng">
-
-<button onclick="reportDisease()">Submit Report</button>
-
-<button class="logout" onclick="logout()">Logout</button>
-
-<p class="note">Your location will be captured automatically 📍</p>
+<div class="cards">
+    <div class="card">
+        <h3 id="totalReports">0</h3>
+        <p>Total Reports</p>
+    </div>
+    <div class="card">
+        <h3 id="lastDisease">-</h3>
+        <p>Last Reported Disease</p>
+    </div>
+</div>
 
 </div>
 
-<!-- LINK YOUR JS -->
+<!-- REPORT FORM -->
+<div id="reportSection" style="display:none">
+
+<div class="form-card">
+<h3>Report Disease</h3>
+
+<input id="name" placeholder="Name">
+<input id="age" placeholder="Age">
+<input id="phone" placeholder="Phone">
+<input id="disease" placeholder="Disease">
+<input id="location" placeholder="Location">
+<input type="date" id="date">
+
+<input type="hidden" id="lat">
+<input type="hidden" id="lng">
+
+<button onclick="submitForm()">Submit</button>
+<p id="status"></p>
+
+</div>
+
+</div>
+
+<!-- MY REPORTS -->
+<div id="reportsSection" style="display:none">
+
+<input class="search" id="search" placeholder="Search..." onkeyup="filterReports()">
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Disease</th>
+<th>Location</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody id="reportTable"></tbody>
+</table>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profileSection" style="display:none">
+<div class="form-card">
+<h3>User Profile</h3>
+<p><b>Username:</b> User</p>
+<p><b>Status:</b> Active</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
 <script src="script.js"></script>
 
 <script>
+let allReports = []
+
+// NAVIGATION
+function showSection(section){
+    document.getElementById("dashboardSection").style.display="none"
+    document.getElementById("reportSection").style.display="none"
+    document.getElementById("reportsSection").style.display="none"
+    document.getElementById("profileSection").style.display="none"
+
+    document.getElementById(section+"Section").style.display="block"
+}
+
+// SUBMIT
+async function submitForm(){
+    await reportDisease()
+    loadMyReports()
+}
+
+// LOAD REPORTS
+async function loadMyReports(){
+    let res = await fetch("/reports")
+    let data = await res.json()
+
+    allReports = data
+
+    document.getElementById("totalReports").innerText = data.length
+    document.getElementById("lastDisease").innerText = data.length ? data[data.length-1].disease : "-"
+
+    let table = document.getElementById("reportTable")
+    table.innerHTML=""
+
+    data.forEach(r=>{
+        table.innerHTML += `
+        <tr>
+        <td>${r.name}</td>
+        <td>${r.disease}</td>
+        <td>${r.location}</td>
+        <td>${r.date}</td>
+        </tr>`
+    })
+}
+
+// SEARCH FILTER
+function filterReports(){
+    let keyword = document.getElementById("search").value.toLowerCase()
+
+    let filtered = allReports.filter(r =>
+        r.disease.toLowerCase().includes(keyword) ||
+        r.location.toLowerCase().includes(keyword)
+    )
+
+    let table = document.getElementById("reportTable")
+    table.innerHTML=""
+
+    filtered.forEach(r=>{
+        table.innerHTML += `
+        <tr>
+        <td>${r.name}</td>
+        <td>${r.disease}</td>
+        <td>${r.location}</td>
+        <td>${r.date}</td>
+        </tr>`
+    })
+}
+
+// DARK MODE
+function toggleDark(){
+    document.body.classList.toggle("dark")
+}
+
+// LOGOUT
 function logout(){
-    alert("Logged out successfully")
     window.location="login.html"
 }
+
+// GPS
+if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+        document.getElementById("lat").value = pos.coords.latitude
+        document.getElementById("lng").value = pos.coords.longitude
+    })
+}
+
+// LOAD
+window.onload = loadMyReports
 </script>
 
 </body>
