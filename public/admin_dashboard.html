@@ -220,6 +220,69 @@ font-size:12px;
 }
 
 }
+/* ===== DEFAULT (DARK MODE) ===== */
+body{
+background:#0f172a;
+color:white;
+transition:0.3s;
+}
+
+.main{
+background:#020617;
+min-height:100vh;
+padding:20px;
+}
+
+.card, .section, .table-wrapper{
+background:#1e293b;
+color:white;
+}
+
+/* ===== LIGHT MODE (FULL PAGE) ===== */
+body.light-mode{
+background:#f1f5f9;
+color:black;
+}
+
+.light-mode .main{
+background:#f1f5f9;
+}
+
+.light-mode .card,
+.light-mode .section,
+.light-mode .table-wrapper{
+background:white;
+color:black;
+}
+
+.light-mode table{
+background:white;
+color:black;
+}
+
+.light-mode th{
+background:#e2e8f0;
+}
+
+.light-mode td{
+color:black;
+}
+
+.light-mode input{
+background:white;
+color:black;
+border:1px solid #ccc;
+}
+
+/* Buttons */
+.light-mode .menu-btn{
+color:black;
+}
+
+.light-mode .menu-btn.active{
+background:#2563eb;
+color:white;
+}
 </style>
 </head>
 
