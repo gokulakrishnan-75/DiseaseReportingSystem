@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Dashboard</title>
-
-<link rel="stylesheet" href="style.css">
+<title>Doctor Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -13,106 +11,166 @@
 
 <style>
 
-/* LAYOUT */
+/* ===== GLOBAL ===== */
 body{
-    margin:0;
-    font-family:'Segoe UI';
-    background:#f1f5f9;
+margin:0;
+font-family:'Segoe UI';
+background:#eef2f7;
 }
 
-.dashboard{
-    display:flex;
+/* LAYOUT */
+.layout{
+display:flex;
 }
 
 /* SIDEBAR */
 .sidebar{
-    width:230px;
-    height:100vh;
-    background:#0f172a;
-    color:white;
-    padding:20px;
+width:240px;
+height:100vh;
+background:linear-gradient(180deg,#0f172a,#1e293b);
+color:white;
+padding:20px;
 }
 
 .sidebar h2{
-    margin-bottom:30px;
+margin-bottom:30px;
 }
 
 .sidebar button{
-    width:100%;
-    margin:10px 0;
-    padding:10px;
-    background:#1e293b;
-    color:white;
-    border:none;
-    cursor:pointer;
+width:100%;
+margin:10px 0;
+padding:12px;
+background:#334155;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:8px;
+transition:0.3s;
+}
+
+.sidebar button:hover{
+background:#3b82f6;
+transform:translateX(5px);
 }
 
 /* MAIN */
 .main{
-    flex:1;
-    padding:20px;
+flex:1;
+padding:20px;
 }
 
-/* TOP BAR */
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:20px;
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
-.profile{
-    background:white;
-    padding:8px 15px;
-    border-radius:20px;
+.doctor{
+background:white;
+padding:10px 15px;
+border-radius:20px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* CARDS */
 .cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:15px;
-    margin-bottom:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-bottom:20px;
 }
 
 .card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+padding:20px;
+border-radius:12px;
+color:white;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+transition:0.3s;
 }
 
-/* TABLE */
-.table-card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
+.card:hover{
+transform:translateY(-5px);
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+.total{background:#3b82f6;}
+.danger{background:#ef4444;}
+.today{background:#10b981;}
+
+/* ALERT */
+.alert{
+background:#ef4444;
+color:white;
+padding:12px;
+border-radius:8px;
+margin-bottom:10px;
+animation:blink 1s infinite;
 }
 
-th,td{
-    padding:10px;
-    border-bottom:1px solid #ddd;
+.hidden{
+display:none;
 }
 
-/* BUTTONS */
-.actions button{
-    margin-right:10px;
-    padding:10px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    cursor:pointer;
+@keyframes blink{
+0%{opacity:1;}
+50%{opacity:0.5;}
+100%{opacity:1;}
 }
 
 /* SEARCH */
 .search{
-    margin-bottom:10px;
-    padding:8px;
-    width:100%;
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+/* TABLE */
+.table-container{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+text-align:left;
+border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+background:#f1f5f9;
+}
+
+/* BUTTON */
+.deleteBtn{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.deleteBtn:hover{
+background:#dc2626;
+}
+
+/* CHART */
+.chart-box{
+margin-top:20px;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
 </style>
@@ -120,55 +178,55 @@ th,td{
 
 <body>
 
-<div class="dashboard">
+<div class="layout">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>Admin Panel</h2>
-    <button onclick="loadReports()">Load Reports</button>
-    <button onclick="deleteSelected()">Delete Selected</button>
-    <button onclick="downloadReports()">Download Excel</button>
-    <button onclick="loadAnalytics()">Analytics</button>
-    <button onclick="openMap()">View Map</button>
+    <h2>🧑‍⚕️ Health Panel</h2>
+
+    <button onclick="loadReports()">📋 Patient Reports</button>
+    <button onclick="loadAnalytics()">📊 Analytics</button>
+    <button onclick="openMap()">🌍 Map</button>
+    <button onclick="downloadReports()">📥 Export</button>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- TOP -->
-<div class="topbar">
-    <h1>Dashboard</h1>
-    <div class="profile">👤 Admin</div>
+<!-- HEADER -->
+<div class="header">
+    <h1>Doctor Dashboard</h1>
+    <div class="doctor">👨‍⚕️ Dr. Admin</div>
 </div>
 
 <!-- CARDS -->
 <div class="cards">
-    <div class="card">
+    <div class="card total">
         <h3 id="totalReports">0</h3>
-        <p>Total Reports</p>
+        <p>Total Cases</p>
     </div>
 
-    <div class="card">
+    <div class="card danger">
         <h3 id="topDisease">-</h3>
-        <p>Top Disease</p>
+        <p>Most Common Disease</p>
     </div>
 
-    <div class="card">
+    <div class="card today">
         <h3 id="todayReports">0</h3>
-        <p>Today's Reports</p>
+        <p>Today's Cases</p>
     </div>
 </div>
 
-<!-- ACTIONS -->
-<div class="actions">
-    <button onclick="loadReports()">Refresh</button>
+<!-- ALERT -->
+<div id="alertBox" class="alert hidden">
+⚠️ High number of cases detected!
 </div>
 
 <!-- SEARCH -->
-<input type="text" class="search" placeholder="Search..." onkeyup="filterReports()">
+<input type="text" class="search" placeholder="Search patient..." onkeyup="filterReports()">
 
 <!-- TABLE -->
-<div class="table-card">
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -184,82 +242,83 @@ th,td{
 </thead>
 
 <tbody id="reports"></tbody>
-
 </table>
 </div>
 
-<br>
-
 <!-- CHART -->
-<div class="card">
-<h3>Analytics</h3>
+<div class="chart-box">
+<h3>Disease Distribution</h3>
 <canvas id="chart"></canvas>
 </div>
 
 </div>
-
 </div>
 
 <script src="script.js"></script>
 
 <script>
 
-// EXTRA ANALYTICS
+// LOAD REPORTS
 async function loadReports(){
 
-    let res = await fetch("/reports")
-    let data = await res.json()
+let res = await fetch("/reports")
+let data = await res.json()
 
-    let table = document.getElementById("reports")
-    table.innerHTML=""
+let table = document.getElementById("reports")
+table.innerHTML=""
 
-    let diseaseCount = {}
-    let today = new Date().toLocaleDateString()
-    let todayCount = 0
+let diseaseCount={}
+let today=new Date().toLocaleDateString()
+let todayCount=0
 
-    data.forEach(r=>{
+data.forEach(r=>{
 
-        table.innerHTML += `
-        <tr>
-        <td><input type="checkbox" class="selectReport" value="${r._id}"></td>
-        <td>${r.name}</td>
-        <td>${r.age}</td>
-        <td>${r.phone}</td>
-        <td>${r.disease}</td>
-        <td>${r.location}</td>
-        <td>${r.date}</td>
-        <td><button onclick="deleteReport('${r._id}')">Delete</button></td>
-        </tr>
-        `
+table.innerHTML+=`
+<tr>
+<td><input type="checkbox" class="selectReport" value="${r._id}"></td>
+<td>${r.name}</td>
+<td>${r.age}</td>
+<td>${r.phone}</td>
+<td>${r.disease}</td>
+<td>${r.location}</td>
+<td>${r.date}</td>
+<td><button class="deleteBtn" onclick="deleteReport('${r._id}')">Delete</button></td>
+</tr>
+`
 
-        // count diseases
-        diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1
+diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
 
-        if(new Date(r.date).toLocaleDateString() === today){
-            todayCount++
-        }
+if(new Date(r.date).toLocaleDateString()===today){
+todayCount++
+}
 
-    })
+})
 
-    document.getElementById("totalReports").innerText = data.length
-    document.getElementById("todayReports").innerText = todayCount
+// stats
+document.getElementById("totalReports").innerText=data.length
+document.getElementById("todayReports").innerText=todayCount
 
-    // top disease
-    let top = Object.keys(diseaseCount).reduce((a,b)=> diseaseCount[a]>diseaseCount[b]?a:b,"-")
-    document.getElementById("topDisease").innerText = top
+let top=Object.keys(diseaseCount).reduce((a,b)=>diseaseCount[a]>diseaseCount[b]?a:b,"-")
+document.getElementById("topDisease").innerText=top
+
+// alert
+if(data.length>10){
+document.getElementById("alertBox").classList.remove("hidden")
+}
+
 }
 
 // SEARCH
 function filterReports(){
-    let k=document.querySelector(".search").value.toLowerCase()
-    document.querySelectorAll("#reports tr").forEach(row=>{
-        row.style.display = row.innerText.toLowerCase().includes(k) ? "" : "none"
-    })
+let k=document.querySelector(".search").value.toLowerCase()
+document.querySelectorAll("#reports tr").forEach(row=>{
+row.style.display=row.innerText.toLowerCase().includes(k)?"":"none"
+})
 }
 
 // MAP
 function openMap(){
-    window.location.href="/admin-map.html"
+window.location="/admin-map.html"
 }
 
 </script>
