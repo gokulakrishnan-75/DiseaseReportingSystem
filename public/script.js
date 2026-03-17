@@ -351,3 +351,72 @@ document.querySelector(".toggle-btn").innerText =
 isLight ? "☀ Light Mode" : "🌙 Dark Mode"
 
 }
+async function loadInsightsAndActivity(){
+
+let res = await fetch("/reports")
+let data = await res.json()
+
+/* ===== INSIGHTS ===== */
+let insights = []
+
+// Top disease
+let diseaseCount={}
+data.forEach(r=>{
+diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
+})
+
+let topDisease="-", max=0
+for(let d in diseaseCount){
+if(diseaseCount[d]>max){
+max=diseaseCount[d]
+topDisease=d
+}
+}
+
+insights.push(`Top disease: ${topDisease}`)
+
+// High risk location
+let locationCount={}
+data.forEach(r=>{
+locationCount[r.location]=(locationCount[r.location]||0)+1
+})
+
+let highArea="-", maxLoc=0
+for(let l in locationCount){
+if(locationCount[l]>maxLoc){
+maxLoc=locationCount[l]
+highArea=l
+}
+}
+
+insights.push(`High risk area: ${highArea}`)
+
+// Total cases insight
+insights.push(`Total reports: ${data.length}`)
+
+/* UPDATE INSIGHTS UI */
+let insightsHTML=""
+insights.forEach(i=>{
+insightsHTML += `<li>${i}</li>`
+})
+
+document.getElementById("insightsList").innerHTML = insightsHTML
+
+
+/* ===== RECENT ACTIVITY ===== */
+let activityHTML=""
+
+// show last 5 reports
+data.slice(-5).reverse().forEach(r=>{
+activityHTML += `<li>📝 ${r.name} reported ${r.disease} in ${r.location}</li>`
+})
+
+document.getElementById("activityList").innerHTML = activityHTML
+
+}
+setInterval(loadInsightsAndActivity, 5000) // every 5 sec
+window.addEventListener("load",function(){
+applyTheme()
+loadDashboard()
+loadInsightsAndActivity()
+})
