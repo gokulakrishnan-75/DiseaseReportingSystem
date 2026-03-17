@@ -82,15 +82,13 @@ body:JSON.stringify(data)
 
 let result = await res.json()
 
-if(result.status){
+if(result.status === "Report Submitted Successfully"){
 
-alert("Report Submitted Successfully")
+alert("✅ Report Submitted & SMS Sent Successfully")
 
 }else{
 
-alert("Error submitting report")
-
-}
+alert("❌ Error submitting report")
 
 }
 
