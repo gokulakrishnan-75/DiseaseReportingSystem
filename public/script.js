@@ -319,27 +319,35 @@ window.location="login.html"
 }
 
 
-/* THEME TOGGLE */
+/* TOGGLE THEME */
 function toggleTheme(){
 
-document.body.classList.toggle("light-mode")
+let isLight = document.body.classList.toggle("light-mode")
 
-if(document.body.classList.contains("light-mode")){
-localStorage.setItem("theme","light")
-}else{
-localStorage.setItem("theme","dark")
-}
+localStorage.setItem("theme", isLight ? "light" : "dark")
 
 }
 
 
-/* LOAD THEME */
-window.onload = function(){
+/* APPLY THEME ON LOAD */
+function applyTheme(){
 
 let theme = localStorage.getItem("theme")
 
-if(theme==="light"){
+if(theme === "light"){
 document.body.classList.add("light-mode")
+}else{
+document.body.classList.remove("light-mode")
 }
+
+}
+function toggleTheme(){
+
+let isLight = document.body.classList.toggle("light-mode")
+
+localStorage.setItem("theme", isLight ? "light" : "dark")
+
+document.querySelector(".toggle-btn").innerText = 
+isLight ? "☀ Light Mode" : "🌙 Dark Mode"
 
 }
