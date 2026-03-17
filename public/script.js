@@ -296,3 +296,50 @@ loadHeatmap()
 }
 
 }
+/* NAVIGATION + ACTIVE MENU */
+function navigate(btn, page){
+
+document.querySelectorAll(".menu-btn").forEach(b=>{
+b.classList.remove("active")
+})
+
+btn.classList.add("active")
+
+window.location = page
+}
+
+
+/* LOGOUT */
+function logout(){
+
+localStorage.clear()
+alert("Logged out successfully")
+window.location="login.html"
+
+}
+
+
+/* THEME TOGGLE */
+function toggleTheme(){
+
+document.body.classList.toggle("light-mode")
+
+if(document.body.classList.contains("light-mode")){
+localStorage.setItem("theme","light")
+}else{
+localStorage.setItem("theme","dark")
+}
+
+}
+
+
+/* LOAD THEME */
+window.onload = function(){
+
+let theme = localStorage.getItem("theme")
+
+if(theme==="light"){
+document.body.classList.add("light-mode")
+}
+
+}

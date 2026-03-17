@@ -59,7 +59,167 @@ background:white;
 padding:20px;
 border-radius:10px;
 }
+.sidebar{
+width:240px;
+height:100vh;
+background:#0f172a;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+padding:20px;
+}
 
+.menu button{
+width:100%;
+padding:12px;
+margin:8px 0;
+background:#1e293b;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+text-align:left;
+transition:0.3s;
+}
+
+.menu button:hover{
+background:#3b82f6;
+}
+
+/* LOGOUT SECTION */
+.logout-section{
+margin-top:auto;
+}
+
+.logout-section button{
+width:100%;
+padding:12px;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+.logout-section button:hover{
+background:#dc2626;
+}
+/* SIDEBAR */
+.sidebar{
+width:260px;
+height:100vh;
+background:#0f172a;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+padding:20px;
+transition:0.3s;
+}
+
+/* PROFILE */
+.profile{
+display:flex;
+align-items:center;
+gap:10px;
+margin-bottom:20px;
+}
+
+.avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+background:#3b82f6;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+/* MENU */
+.menu-btn{
+width:100%;
+padding:12px;
+margin:6px 0;
+background:transparent;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+text-align:left;
+transition:0.3s;
+}
+
+.menu-btn:hover{
+background:#1e293b;
+}
+
+/* ACTIVE MENU */
+.menu-btn.active{
+background:#3b82f6;
+}
+
+/* BOTTOM */
+.bottom-section{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.toggle-btn{
+background:#1e293b;
+color:white;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.logout-btn{
+background:#ef4444;
+color:white;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* LIGHT MODE */
+.light-mode{
+background:#f1f5f9;
+color:black;
+}
+
+.light-mode .sidebar{
+background:white;
+color:black;
+}
+
+.light-mode .menu-btn{
+color:black;
+}
+
+.light-mode .menu-btn.active{
+background:#2563eb;
+color:white;
+}
+@media(max-width:768px){
+
+.sidebar{
+width:70px;
+padding:10px;
+}
+
+.profile h4,
+.profile p,
+.menu-btn{
+font-size:12px;
+}
+
+}
 </style>
 </head>
 
@@ -68,12 +228,37 @@ border-radius:10px;
 <div class="container">
 
 <div class="sidebar">
-<h2>Admin Panel</h2>
 
-<button onclick="location.href='admin_dashboard.html'">🏠 Dashboard</button>
-<button onclick="location.href='reports.html'">📋 Reports</button>
-<button onclick="location.href='analytics.html'">📊 Analytics</button>
-<button onclick="location.href='map.html'">🌍 Map</button>
+<!-- PROFILE -->
+<div class="profile">
+<div class="avatar">A</div>
+<div>
+<h4>Admin</h4>
+<p>admin@system</p>
+</div>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+
+<button class="menu-btn active" onclick="navigate(this,'admin_dashboard.html')">🏠 Dashboard</button>
+
+<button class="menu-btn" onclick="navigate(this,'reports.html')">📋 Reports</button>
+
+<button class="menu-btn" onclick="navigate(this,'analytics.html')">📊 Analytics</button>
+
+<button class="menu-btn" onclick="navigate(this,'map.html')">🌍 Map</button>
+
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom-section">
+
+<button class="toggle-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
+
+<button class="logout-btn" onclick="logout()">🚪 Logout</button>
+
+</div>
 
 </div>
 
