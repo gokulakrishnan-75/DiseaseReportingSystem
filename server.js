@@ -1,417 +1,279 @@
-const API = window.location.origin;
+require("dotenv").config()
 
-/* SIGNUP */
+const express = require("express")
+const mongoose = require("mongoose")
+const cors = require("cors")
+const path = require("path")
+const twilio = require("twilio")
 
-async function signup(){
+const app = express()
 
-const username = document.getElementById("username").value
-const password = document.getElementById("password").value
+/* ---------------- MIDDLEWARE ---------------- */
 
-const res = await fetch(API + "/signup",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({username,password})
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, "public")))
+
+/* ---------------- MONGODB CONNECTION ---------------- */
+
+mongoose.connect("mongodb+srv://gokul:gokul6494@cluster0.d9blo36.mongodb.net/diseaseDB?retryWrites=true&w=majority")
+.then(()=>console.log("MongoDB Connected"))
+.catch(err=>console.log(err))
+
+/* ---------------- DATABASE MODELS ---------------- */
+
+const User = mongoose.model("User",{
+username:String,
+password:String
 })
 
-const data = await res.json()
-
-if(data.status){
-alert("Signup Successful")
-window.location="login.html"
-}else{
-alert("Signup Failed")
-}
-
-}
-
-
-/* LOGIN */
-
-async function login(){
-
-const username = document.getElementById("username").value
-const password = document.getElementById("password").value
-
-const res = await fetch(API + "/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({username,password})
+const Report = mongoose.model("Report",{
+name:String,
+phone:String,
+age:Number,
+disease:String,
+location:String,
+date:String,
+lat:Number,
+lng:Number
 })
 
-const data = await res.json()
+/* ---------------- TWILIO SETUP ---------------- */
 
-if(data.status){
+const client = twilio(
+process.env.TWILIO_SID,
+process.env.TWILIO_AUTH
+)
 
-if(data.role==="admin"){
-window.location="admin_dashboard.html"
+/* ---------------- HOME PAGE ---------------- */
+
+app.get("/",(req,res)=>{
+res.sendFile(path.join(__dirname,"public","index.html"))
+})
+
+/* ---------------- SIGNUP ---------------- */
+
+app.post("/signup",async(req,res)=>{
+
+try{
+
+const {username,password}=req.body
+
+if(!username || !password){
+return res.json({status:false,message:"Missing fields"})
+}
+
+const existing=await User.findOne({username})
+
+if(existing){
+return res.json({status:false,message:"User already exists"})
+}
+
+const user=new User({username,password})
+await user.save()
+
+res.json({status:true})
+
+}catch(error){
+
+console.log("Signup Error:",error)
+res.json({status:false})
+
+}
+
+})
+
+/* ---------------- LOGIN ---------------- */
+
+app.post("/login",async(req,res)=>{
+
+try{
+
+const {username,password}=req.body
+
+if(username===process.env.ADMIN_USER && password===process.env.ADMIN_PASS){
+
+return res.json({
+status:true,
+role:"admin"
+})
+
+}
+
+const user=await User.findOne({username,password})
+
+if(user){
+
+res.json({
+status:true,
+role:"user"
+})
+
 }else{
-window.location="user_dashboard.html"
-}
 
-}else{
-alert("Invalid login")
-}
+res.json({status:false})
 
 }
 
+}catch(error){
+
+console.log("Login Error:",error)
+res.json({status:false})
+
+}
+
+})
 
 /* ---------------- REPORT DISEASE ---------------- */
 
-async function reportDisease(){
+app.post("/report",async(req,res)=>{
 
-let data = {
-name: document.getElementById("name").value,
-age: document.getElementById("age").value,
-phone: document.getElementById("phone").value,
-disease: document.getElementById("disease").value,
-location: document.getElementById("location").value,
-date: document.getElementById("date").value,
-lat: document.getElementById("lat").value,
-lng: document.getElementById("lng").value
-}
+try{
 
-let res = await fetch("/report",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
-})
+const report=new Report(req.body)
+await report.save()
 
-let result = await res.json()
+const mapsLink=`https://www.google.com/maps?q=${req.body.lat},${req.body.lng}`
 
-if(result.status){
+await client.messages.create({
 
-alert("Report Submitted Successfully")
+body:`🚨 Disease Report Alert
 
-}else{
+Name: ${req.body.name}
+Phone: ${req.body.phone}
+Disease: ${req.body.disease}
+Location: ${req.body.location}
 
-alert("Error submitting report")
+📍 GPS:
+${mapsLink}
 
-}
+Date: ${req.body.date}`,
 
-}
-
-
-/* ---------------- LOAD REPORTS ---------------- */
-
-async function loadReports(){
-
-let res = await fetch("/reports")
-
-let data = await res.json()
-
-let table = document.getElementById("reports")
-
-if(!table) return
-
-table.innerHTML=""
-
-data.forEach(r=>{
-
-let row = `
-<tr>
-
-<td><input type="checkbox" class="selectReport" value="${r._id}"></td>
-
-<td>${r.name}</td>
-<td>${r.age}</td>
-<td>${r.phone}</td>
-<td>${r.disease}</td>
-
-<td>
-${r.location}<br>
-<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" class="map-link">
-📍 View on Map
-</a>
-</td>
-
-<td>${r.date}</td>
-
-<td>
-<button class="deleteBtn" onclick="deleteReport('${r._id}')">Delete</button>
-</td>
-
-</tr>
-`
-
-table.innerHTML += row
+from:process.env.TWILIO_NUMBER,
+to:process.env.ADMIN_PHONE
 
 })
 
+res.json({status:"Report Submitted Successfully"})
+
+}catch(error){
+
+console.log("Report Error:",error)
+res.json({status:"Error submitting report"})
+
 }
 
+})
+
+/* ---------------- GET REPORTS ---------------- */
+
+app.get("/reports",async(req,res)=>{
+
+try{
+
+const data=await Report.find()
+res.json(data)
+
+}catch{
+
+res.json([])
+
+}
+
+})
+
+/* ---------------- ANALYTICS ---------------- */
+
+app.get("/analytics",async(req,res)=>{
+
+try{
+
+const data=await Report.aggregate([
+{$group:{_id:"$disease",count:{$sum:1}}}
+])
+
+res.json(data)
+
+}catch{
+
+res.json([])
+
+}
+
+})
 
 /* ---------------- DELETE REPORT ---------------- */
 
-async function deleteReport(id){
+app.delete("/deleteReport/:id",async(req,res)=>{
 
-if(confirm("Delete this report?")){
+try{
 
-await fetch("/deleteReport/"+id,{
-method:"DELETE"
+await Report.findByIdAndDelete(req.params.id)
+res.json({status:true})
+
+}catch{
+
+res.json({status:false})
+
+}
+
 })
-
-loadReports()
-
-}
-
-}
-
 
 /* ---------------- BULK DELETE ---------------- */
 
-async function deleteSelected(){
+app.post("/bulkDelete",async(req,res)=>{
 
-let checkboxes = document.querySelectorAll(".selectReport:checked")
+try{
 
-let ids=[]
+const ids=req.body.ids
 
-checkboxes.forEach(cb=>{
-ids.push(cb.value)
-})
+await Report.deleteMany({_id:{$in:ids}})
 
-await fetch("/bulkDelete",{
+res.json({status:true})
 
-method:"POST",
+}catch{
 
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({ids})
-
-})
-
-alert("Selected Reports Deleted")
-
-loadReports()
+res.json({status:false})
 
 }
 
+})
 
 /* ---------------- DOWNLOAD CSV ---------------- */
 
-function downloadReports(){
+app.get("/download",async(req,res)=>{
 
-window.location="/download"
+const reports=await Report.find()
 
-}
-
-
-/* ---------------- ANALYTICS CHART ---------------- */
-
-async function loadAnalytics(){
-
-let res = await fetch("/analytics")
-
-let data = await res.json()
-
-let labels = data.map(d=>d._id)
-let values = data.map(d=>d.count)
-
-new Chart(document.getElementById("chart"),{
-
-type:"bar",
-
-data:{
-labels:labels,
-datasets:[{
-label:"Disease Reports",
-data:values
-}]
-}
-
-})
-
-}
-
-
-/* ---------------- HEATMAP ---------------- */
-
-async function loadHeatmap(){
-
-let res = await fetch("/reports")
-
-let reports = await res.json()
-
-let map = L.map('map').setView([20.5937,78.9629],5)
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:19
-}).addTo(map)
-
-let heatPoints=[]
+let csv="Name,Phone,Age,Disease,Location,Date,Map Link\n"
 
 reports.forEach(r=>{
 
-if(r.lat && r.lng){
+const mapLink=`https://www.google.com/maps?q=${r.lat},${r.lng}`
 
-heatPoints.push([r.lat,r.lng,0.5])
-
-}
+csv+=`${r.name},${r.phone},${r.age},${r.disease},${r.location},${r.date},${mapLink}\n`
 
 })
 
-L.heatLayer(heatPoints,{
-radius:25,
-blur:15,
-maxZoom:10
-}).addTo(map)
+res.header("Content-Type","text/csv")
+res.attachment("reports.csv")
 
-}
-
-
-/* ---------------- GPS LOCATION ---------------- */
-
-if(navigator.geolocation){
-
-navigator.geolocation.getCurrentPosition(function(position){
-
-let latField = document.getElementById("lat")
-let lngField = document.getElementById("lng")
-
-if(latField && lngField){
-
-latField.value = position.coords.latitude
-lngField.value = position.coords.longitude
-
-}
+return res.send(csv)
 
 })
 
-}
+/* ---------------- SERVER START ---------------- */
 
+const PORT=process.env.PORT || 3000
 
-/* ---------------- PAGE LOAD ---------------- */
-
-window.onload=function(){
-
-loadReports()
-
-if(document.getElementById("map")){
-loadHeatmap()
-}
-
-}
-/* NAVIGATION + ACTIVE MENU */
-function navigate(btn, page){
-
-document.querySelectorAll(".menu-btn").forEach(b=>{
-b.classList.remove("active")
+app.listen(PORT,()=>{
+console.log("Server running on port "+PORT)
 })
+app.get("/userReports/:phone",async(req,res)=>{
 
-btn.classList.add("active")
+const reports = await Report.find({phone:req.params.phone})
 
-window.location = page
-}
+res.json(reports)
 
-
-/* LOGOUT */
-function logout(){
-
-localStorage.clear()
-alert("Logged out successfully")
-window.location="login.html"
-
-}
-
-
-/* TOGGLE THEME */
-function toggleTheme(){
-
-let isLight = document.body.classList.toggle("light-mode")
-
-localStorage.setItem("theme", isLight ? "light" : "dark")
-
-}
-
-
-/* APPLY THEME ON LOAD */
-function applyTheme(){
-
-let theme = localStorage.getItem("theme")
-
-if(theme === "light"){
-document.body.classList.add("light-mode")
-}else{
-document.body.classList.remove("light-mode")
-}
-
-}
-function toggleTheme(){
-
-let isLight = document.body.classList.toggle("light-mode")
-
-localStorage.setItem("theme", isLight ? "light" : "dark")
-
-document.querySelector(".toggle-btn").innerText = 
-isLight ? "☀ Light Mode" : "🌙 Dark Mode"
-
-}
-async function loadInsightsAndActivity(){
-
-let res = await fetch("/reports")
-let data = await res.json()
-
-/* ===== INSIGHTS ===== */
-let insights = []
-
-// Top disease
-let diseaseCount={}
-data.forEach(r=>{
-diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
 })
-
-let topDisease="-", max=0
-for(let d in diseaseCount){
-if(diseaseCount[d]>max){
-max=diseaseCount[d]
-topDisease=d
-}
-}
-
-insights.push(`Top disease: ${topDisease}`)
-
-// High risk location
-let locationCount={}
-data.forEach(r=>{
-locationCount[r.location]=(locationCount[r.location]||0)+1
-})
-
-let highArea="-", maxLoc=0
-for(let l in locationCount){
-if(locationCount[l]>maxLoc){
-maxLoc=locationCount[l]
-highArea=l
-}
-}
-
-insights.push(`High risk area: ${highArea}`)
-
-// Total cases insight
-insights.push(`Total reports: ${data.length}`)
-
-/* UPDATE INSIGHTS UI */
-let insightsHTML=""
-insights.forEach(i=>{
-insightsHTML += `<li>${i}</li>`
-})
-
-document.getElementById("insightsList").innerHTML = insightsHTML
-
-
-/* ===== RECENT ACTIVITY ===== */
-let activityHTML=""
-
-// show last 5 reports
-data.slice(-5).reverse().forEach(r=>{
-activityHTML += `<li>📝 ${r.name} reported ${r.disease} in ${r.location}</li>`
-})
-
-document.getElementById("activityList").innerHTML = activityHTML
-
-}
-setInterval(loadInsightsAndActivity, 5000) // every 5 sec
