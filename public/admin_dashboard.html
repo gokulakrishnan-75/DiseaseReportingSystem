@@ -3,27 +3,15 @@
 <head>
 <title>Admin Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 <style>
-
-/* ===== BODY ===== */
 body{
 margin:0;
 font-family:'Segoe UI';
 background:#f1f5f9;
 }
 
-/* ===== LAYOUT ===== */
-.container{
-display:flex;
-}
+.container{display:flex;}
 
-/* ===== SIDEBAR ===== */
 .sidebar{
 width:230px;
 height:100vh;
@@ -32,45 +20,30 @@ color:white;
 padding:20px;
 }
 
-.sidebar h2{
-margin-bottom:20px;
-}
-
 .sidebar button{
 width:100%;
+margin:10px 0;
 padding:12px;
-margin:8px 0;
 background:#1e293b;
 color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
-transition:0.3s;
 }
 
 .sidebar button:hover{
 background:#3b82f6;
 }
 
-/* ===== MAIN ===== */
 .main{
 flex:1;
 padding:20px;
 }
 
-/* ===== HEADER ===== */
-.header{
-display:flex;
-justify-content:space-between;
-margin-bottom:20px;
-}
-
-/* ===== CARDS ===== */
 .cards{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px;
-margin-bottom:20px;
 }
 
 .card{
@@ -80,59 +53,10 @@ border-radius:10px;
 box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
-/* ===== TABLE ===== */
-.table-box{
-background:white;
-padding:15px;
-border-radius:10px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
-}
-
-tr:hover{
-background:#f1f5f9;
-}
-
-/* ===== BUTTON ===== */
-.deleteBtn{
-background:red;
-color:white;
-border:none;
-padding:6px 10px;
-border-radius:5px;
-cursor:pointer;
-}
-
-/* ===== SEARCH ===== */
-.search{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-/* ===== CHART ===== */
-.chart-box{
+.section{
 margin-top:20px;
 background:white;
 padding:20px;
-border-radius:10px;
-}
-
-/* ===== MAP ===== */
-#map{
-height:400px;
-margin-top:20px;
 border-radius:10px;
 }
 
@@ -143,76 +67,44 @@ border-radius:10px;
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
 <h2>Admin Panel</h2>
 
-<button onclick="loadReports()">📋 Load Reports</button>
-<button onclick="deleteSelected()">🗑 Delete Selected</button>
-<button onclick="downloadReports()">📥 Download CSV</button>
-<button onclick="loadAnalytics()">📊 Analytics</button>
-<button onclick="loadHeatmap()">🌍 Show Map</button>
+<button onclick="location.href='admin_dashboard.html'">🏠 Dashboard</button>
+<button onclick="location.href='reports.html'">📋 Reports</button>
+<button onclick="location.href='analytics.html'">📊 Analytics</button>
+<button onclick="location.href='map.html'">🌍 Map</button>
+<button onclick="downloadReports()">📥 Export</button>
 
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-<div class="header">
-<h1>Dashboard</h1>
-<div>👨‍⚕️ Admin</div>
-</div>
+<h1>Dashboard Overview</h1>
 
-<!-- CARDS -->
 <div class="cards">
-<div class="card">
-<h3 id="totalCount">0</h3>
-<p>Total Reports</p>
+<div class="card"><h3 id="total">0</h3><p>Total Reports</p></div>
+<div class="card"><h3 id="today">0</h3><p>Today Cases</p></div>
+<div class="card"><h3 id="top">-</h3><p>Top Disease</p></div>
 </div>
 
-<div class="card">
-<h3 id="todayCount">0</h3>
-<p>Today's Reports</p>
+<div class="section">
+<h3>📌 System Overview</h3>
+<p>This system helps track disease outbreaks, monitor patient reports and analyze trends.</p>
 </div>
 
-<div class="card">
-<h3 id="topDisease">-</h3>
-<p>Top Disease</p>
-</div>
-</div>
-
-<!-- SEARCH -->
-<input type="text" class="search" placeholder="Search..." onkeyup="filterTable()">
-
-<!-- TABLE -->
-<div class="table-box">
-<table>
-<thead>
-<tr>
-<th>Select</th>
-<th>Name</th>
-<th>Age</th>
-<th>Phone</th>
-<th>Disease</th>
-<th>Location</th>
-<th>Date</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody id="reports"></tbody>
-
-</table>
+<div class="section">
+<h3>🔔 Recent Activity</h3>
+<p>• New disease reported</p>
+<p>• Data exported</p>
+<p>• Admin accessed analytics</p>
 </div>
 
-<!-- CHART -->
-<div class="chart-box">
-<h3>Analytics</h3>
-<canvas id="chart"></canvas>
+<div class="section">
+<h3>📈 Insights</h3>
+<p>• Increase in seasonal diseases</p>
+<p>• High risk areas detected</p>
 </div>
-
-<!-- MAP -->
-<div id="map"></div>
 
 </div>
 
@@ -221,69 +113,37 @@ border-radius:10px;
 <script src="script.js"></script>
 
 <script>
-
-/* EXTRA STATS FIX */
-async function loadReports(){
+async function loadDashboard(){
 
 let res = await fetch("/reports")
 let data = await res.json()
-
-let table = document.getElementById("reports")
-table.innerHTML=""
 
 let today = new Date().toLocaleDateString()
 let todayCount = 0
 let diseaseCount = {}
 
 data.forEach(r=>{
-
-table.innerHTML += `
-<tr>
-<td><input type="checkbox" class="selectReport" value="${r._id}"></td>
-<td>${r.name}</td>
-<td>${r.age}</td>
-<td>${r.phone}</td>
-<td>${r.disease}</td>
-<td>${r.location}</td>
-<td>${r.date}</td>
-<td><button class="deleteBtn" onclick="deleteReport('${r._id}')">Delete</button></td>
-</tr>
-`
-
-// stats
 if(new Date(r.date).toLocaleDateString() === today){
 todayCount++
 }
-
-diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1
-
+diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
 })
 
-document.getElementById("totalCount").innerText = data.length
-document.getElementById("todayCount").innerText = todayCount
+document.getElementById("total").innerText=data.length
+document.getElementById("today").innerText=todayCount
 
-let top = "-"
-let max = 0
-
+let top="-", max=0
 for(let d in diseaseCount){
-if(diseaseCount[d] > max){
-max = diseaseCount[d]
-top = d
+if(diseaseCount[d]>max){
+max=diseaseCount[d]
+top=d
 }
 }
-
-document.getElementById("topDisease").innerText = top
+document.getElementById("top").innerText=top
 
 }
 
-/* SEARCH */
-function filterTable(){
-let input = document.querySelector(".search").value.toLowerCase()
-document.querySelectorAll("#reports tr").forEach(row=>{
-row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none"
-})
-}
-
+window.onload=loadDashboard
 </script>
 
 </body>
