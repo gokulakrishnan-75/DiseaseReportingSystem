@@ -120,7 +120,14 @@ let row = `
 <td>${r.age}</td>
 <td>${r.phone}</td>
 <td>${r.disease}</td>
-<td>${r.location}</td>
+
+<td>
+${r.location} <br>
+<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" style="color:blue;">
+View on Map
+</a>
+</td>
+
 <td>${r.date}</td>
 
 <td>
