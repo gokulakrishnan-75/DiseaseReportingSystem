@@ -8,23 +8,145 @@
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
 <style>
-#map{
-height:500px;
-}
-</style>
 
+/* ===== GLOBAL ===== */
+body{
+margin:0;
+font-family:'Segoe UI';
+background:#f1f5f9;
+}
+
+/* ===== HEADER ===== */
+.header{
+background:#0f172a;
+color:white;
+padding:15px;
+}
+
+.container{
+padding:20px;
+}
+
+/* ===== INFO CARDS ===== */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== MAP ===== */
+#map{
+width:100%;
+height:400px;
+border-radius:10px;
+}
+
+/* ===== DETAILS ===== */
+.info{
+margin-top:20px;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+#map{
+height:300px;
+}
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Disease Heatmap</h1>
+<div class="header">
+<h2>🌍 Disease Heatmap Analysis</h2>
+</div>
 
+<div class="container">
+
+<!-- INFO CARDS -->
+<div class="cards">
+<div class="card">
+<h3 id="totalReports">0</h3>
+<p>Total Cases</p>
+</div>
+
+<div class="card">
+<h3 id="highArea">-</h3>
+<p>High Risk Area</p>
+</div>
+
+<div class="card">
+<h3>Live Tracking</h3>
+<p>Real-time disease spread</p>
+</div>
+</div>
+
+<!-- MAP -->
 <div id="map"></div>
+
+<!-- EXTRA CONTENT -->
+<div class="info">
+<h3>📌 About Heatmap</h3>
+<p>This map shows disease density based on reported locations.</p>
+
+<h3>⚠️ Insights</h3>
+<ul>
+<li>Identify outbreak zones</li>
+<li>Monitor spread patterns</li>
+<li>Support quick decision making</li>
+</ul>
+</div>
+
+</div>
 
 <script src="script.js"></script>
 
 <script>
+
+async function loadMapStats(){
+
+let res = await fetch("/reports")
+let data = await res.json()
+
+document.getElementById("totalReports").innerText = data.length
+
+let locationCount={}
+
+data.forEach(r=>{
+locationCount[r.location]=(locationCount[r.location]||0)+1
+})
+
+let max=0, high="-"
+
+for(let loc in locationCount){
+if(locationCount[loc]>max){
+max=locationCount[loc]
+high=loc
+}
+}
+
+document.getElementById("highArea").innerText=high
+
+}
+
+window.onload = function(){
 loadHeatmap()
+loadMapStats()
+}
+
 </script>
 
 </body>

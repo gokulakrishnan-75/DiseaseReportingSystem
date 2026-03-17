@@ -3,21 +3,126 @@
 <head>
 <title>Reports</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
+/* ===== GLOBAL ===== */
+body{
+font-family:'Segoe UI';
+margin:0;
+background:#f1f5f9;
+}
+
+/* ===== HEADER ===== */
+.header{
+background:#0f172a;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.header h2{
+margin:0;
+}
+
+/* ===== CONTAINER ===== */
+.container{
+padding:20px;
+}
+
+/* ===== TOP CONTROLS ===== */
+.controls{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:15px;
+}
+
+.search{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+flex:1;
+min-width:200px;
+}
+
+.btn{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.deleteBtn{background:#ef4444;color:white;}
+.exportBtn{background:#10b981;color:white;}
+
+/* ===== TABLE ===== */
+.table-wrapper{
+overflow-x:auto;
+background:white;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:700px;
+}
+
+th,td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+tr:hover{
+background:#f9fafb;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+
+.header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.controls{
+flex-direction:column;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>Reports</h1>
+<div class="header">
+<h2>📋 Reports Management</h2>
+</div>
 
-<input type="text" placeholder="Search..." onkeyup="filterReports()">
+<div class="container">
 
-<table border="1">
+<div class="controls">
+<input type="text" class="search" placeholder="Search reports..." onkeyup="filterTable()">
+
+<button class="btn deleteBtn" onclick="deleteSelected()">Delete Selected</button>
+
+<button class="btn exportBtn" onclick="downloadReports()">Export CSV</button>
+</div>
+
+<div class="table-wrapper">
+<table>
 <thead>
 <tr>
 <th>Select</th>
 <th>Name</th>
+<th>Age</th>
 <th>Disease</th>
 <th>Location</th>
 <th>Date</th>
@@ -26,12 +131,17 @@
 </thead>
 
 <tbody id="reports"></tbody>
-</table>
 
-<br>
-<button onclick="deleteSelected()">Delete Selected</button>
+</table>
+</div>
+
+</div>
 
 <script src="script.js"></script>
+
+<script>
+window.onload = loadReports
+</script>
 
 </body>
 </html>
