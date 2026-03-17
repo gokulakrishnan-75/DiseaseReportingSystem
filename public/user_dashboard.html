@@ -6,21 +6,23 @@
 <title>User Dashboard</title>
 
 <style>
-
-/* RESET */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family: 'Segoe UI', sans-serif;
+    font-family:'Segoe UI',sans-serif;
 }
 
-/* BODY */
 body{
-    background: linear-gradient(135deg,#eef2ff,#f8fafc);
+    background:#f4f6f9;
+    transition:0.3s;
 }
 
-/* LAYOUT */
+.dark{
+    background:#020617;
+    color:white;
+}
+
 .dashboard{
     display:flex;
 }
@@ -34,25 +36,18 @@ body{
     padding:20px;
 }
 
-.sidebar h2{
-    margin-bottom:30px;
-    font-size:20px;
-}
+.sidebar h2{margin-bottom:30px;}
 
 .sidebar a{
-    display:flex;
-    align-items:center;
-    gap:10px;
+    display:block;
     padding:12px;
     color:#cbd5e1;
     text-decoration:none;
     border-radius:8px;
-    transition:0.3s;
 }
 
 .sidebar a:hover{
     background:#1e293b;
-    transform:translateX(5px);
 }
 
 /* MAIN */
@@ -61,26 +56,17 @@ body{
     padding:20px;
 }
 
-/* TOP BAR */
+/* TOP */
 .topbar{
     display:flex;
     justify-content:space-between;
-    align-items:center;
     margin-bottom:20px;
 }
 
-.topbar h1{
-    font-size:22px;
-}
-
 .profile{
-    display:flex;
-    align-items:center;
-    gap:10px;
     background:white;
-    padding:8px 12px;
+    padding:8px 15px;
     border-radius:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* CARDS */
@@ -94,72 +80,47 @@ body{
 .card{
     background:white;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.08);
-    transition:0.3s;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
+
+.dark .card{background:#0f172a;}
 
 .card:hover{
-    transform:translateY(-5px);
-}
-
-.card h3{
-    font-size:22px;
-}
-
-.card p{
-    color:gray;
+    transform:translateY(-3px);
 }
 
 /* FORM */
 .form-card{
     background:white;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+    border-radius:10px;
     margin-bottom:20px;
 }
 
-.form-group{
-    margin-bottom:12px;
-}
+.dark .form-card{background:#0f172a;}
 
-.form-group label{
-    font-size:13px;
-    color:#555;
-}
-
-.form-group input{
+input,button{
     width:100%;
     padding:10px;
-    border-radius:6px;
-    border:1px solid #ddd;
-    margin-top:5px;
+    margin:8px 0;
 }
 
-/* BUTTON */
 button{
     background:#2563eb;
     color:white;
-    padding:12px;
     border:none;
-    border-radius:8px;
     cursor:pointer;
-    width:100%;
-    transition:0.3s;
-}
-
-button:hover{
-    background:#1d4ed8;
 }
 
 /* TABLE */
 .table-card{
     background:white;
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+    border-radius:10px;
 }
+
+.dark .table-card{background:#0f172a;}
 
 table{
     width:100%;
@@ -167,47 +128,12 @@ table{
 }
 
 th,td{
-    padding:12px;
-    text-align:left;
-}
-
-th{
-    background:#f1f5f9;
-}
-
-tr:hover{
-    background:#f9fafb;
-}
-
-/* BADGE */
-.badge{
-    background:#dcfce7;
-    color:#16a34a;
-    padding:5px 10px;
-    border-radius:20px;
-    font-size:12px;
+    padding:10px;
+    border-bottom:1px solid #ccc;
 }
 
 /* STATUS */
-.status{
-    text-align:center;
-    margin-top:10px;
-    font-weight:bold;
-}
-
-/* DARK MODE */
-.dark{
-    background:#020617;
-    color:white;
-}
-
-.dark .card,
-.dark .form-card,
-.dark .table-card,
-.dark .profile{
-    background:#0f172a;
-}
-
+.status{text-align:center;margin-top:10px;}
 </style>
 </head>
 
@@ -221,6 +147,7 @@ tr:hover{
     <a onclick="showSection('dashboard')">📊 Dashboard</a>
     <a onclick="showSection('report')">🦠 Report</a>
     <a onclick="showSection('reports')">📄 My Reports</a>
+    <a onclick="showSection('profile')">👤 Profile</a>
     <a onclick="toggleDark()">🌙 Dark Mode</a>
     <a onclick="logout()">🚪 Logout</a>
 </div>
@@ -228,31 +155,61 @@ tr:hover{
 <!-- MAIN -->
 <div class="main">
 
-<!-- TOP BAR -->
+<!-- TOP -->
 <div class="topbar">
-    <h1>Welcome Back 👋</h1>
-    <div class="profile">
-        👤 User
-        <span class="badge">Active</span>
-    </div>
+    <h1>Welcome 👋</h1>
+    <div class="profile">User</div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboardSection">
 
+<div class="card">
+<h2>Welcome Back!</h2>
+<p>Help your community by reporting diseases.</p>
+</div>
+
 <div class="cards">
-    <div class="card">
-        <h3 id="totalReports">0</h3>
-        <p>Total Reports</p>
-    </div>
-    <div class="card">
-        <h3 id="lastDisease">-</h3>
-        <p>Last Disease</p>
-    </div>
-    <div class="card">
-        <h3>Safe</h3>
-        <p>Area Status</p>
-    </div>
+<div class="card">
+<h3 id="totalReports">0</h3>
+<p>Total Reports</p>
+</div>
+
+<div class="card">
+<h3 id="lastDisease">-</h3>
+<p>Last Disease</p>
+</div>
+
+<div class="card">
+<h3 id="riskStatus">Checking...</h3>
+<p>Area Risk</p>
+</div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="cards">
+<div class="card" onclick="showSection('report')">
+<h3>➕ New Report</h3>
+</div>
+
+<div class="card" onclick="showSection('reports')">
+<h3>📄 View Reports</h3>
+</div>
+
+<div class="card" onclick="downloadReports()">
+<h3>📥 Download</h3>
+</div>
+</div>
+
+<!-- HEALTH TIPS -->
+<div class="card">
+<h3>💡 Health Tips</h3>
+<ul>
+<li>Drink clean water</li>
+<li>Use mosquito nets</li>
+<li>Wash hands regularly</li>
+<li>Avoid stagnant water</li>
+</ul>
 </div>
 
 </div>
@@ -263,40 +220,17 @@ tr:hover{
 <div class="form-card">
 <h3>Report Disease</h3>
 
-<div class="form-group">
-<label>Name</label>
-<input id="name">
-</div>
-
-<div class="form-group">
-<label>Age</label>
-<input id="age">
-</div>
-
-<div class="form-group">
-<label>Phone</label>
-<input id="phone">
-</div>
-
-<div class="form-group">
-<label>Disease</label>
-<input id="disease">
-</div>
-
-<div class="form-group">
-<label>Location</label>
-<input id="location">
-</div>
-
-<div class="form-group">
-<label>Date</label>
+<input id="name" placeholder="Name">
+<input id="age" placeholder="Age">
+<input id="phone" placeholder="Phone">
+<input id="disease" placeholder="Disease">
+<input id="location" placeholder="Location">
 <input type="date" id="date">
-</div>
 
 <input type="hidden" id="lat">
 <input type="hidden" id="lng">
 
-<button onclick="submitForm()">Submit Report</button>
+<button onclick="submitForm()">Submit</button>
 <p id="status" class="status"></p>
 
 </div>
@@ -309,7 +243,7 @@ tr:hover{
 <div class="table-card">
 <h3>My Reports</h3>
 
-<input placeholder="Search..." onkeyup="filterReports()" id="search">
+<input id="search" placeholder="Search..." onkeyup="filterReports()">
 
 <table>
 <thead>
@@ -325,6 +259,24 @@ tr:hover{
 
 </div>
 
+<!-- ACTIVITY -->
+<div class="card">
+<h3>Recent Activity</h3>
+<ul id="activityList"></ul>
+</div>
+
+</div>
+
+<!-- PROFILE -->
+<div id="profileSection" style="display:none">
+
+<div class="form-card">
+<h3>Profile</h3>
+<p>Name: User</p>
+<p>Status: Active</p>
+<p>Total Reports: <span id="profileCount">0</span></p>
+</div>
+
 </div>
 
 </div>
@@ -337,27 +289,36 @@ tr:hover{
 let allReports=[]
 
 function showSection(s){
-document.getElementById("dashboardSection").style.display="none"
-document.getElementById("reportSection").style.display="none"
-document.getElementById("reportsSection").style.display="none"
-
+["dashboard","report","reports","profile"].forEach(sec=>{
+document.getElementById(sec+"Section").style.display="none"
+})
 document.getElementById(s+"Section").style.display="block"
 }
 
 async function submitForm(){
 await reportDisease()
-loadMyReports()
+loadData()
 }
 
-async function loadMyReports(){
+async function loadData(){
 let res=await fetch("/reports")
 let data=await res.json()
 allReports=data
 
 document.getElementById("totalReports").innerText=data.length
 document.getElementById("lastDisease").innerText=data.length?data[data.length-1].disease:"-"
+document.getElementById("profileCount").innerText=data.length
+
+updateRisk(data)
+loadActivity(data)
 
 let table=document.getElementById("reportTable")
+
+if(data.length===0){
+table.innerHTML="<tr><td colspan='4'>No reports found</td></tr>"
+return
+}
+
 table.innerHTML=""
 
 data.forEach(r=>{
@@ -374,12 +335,15 @@ table.innerHTML+=`
 function filterReports(){
 let k=document.getElementById("search").value.toLowerCase()
 
-let f=allReports.filter(r=>r.disease.toLowerCase().includes(k))
+let filtered=allReports.filter(r=>
+r.disease.toLowerCase().includes(k) ||
+r.location.toLowerCase().includes(k)
+)
 
 let table=document.getElementById("reportTable")
 table.innerHTML=""
 
-f.forEach(r=>{
+filtered.forEach(r=>{
 table.innerHTML+=`
 <tr>
 <td>${r.name}</td>
@@ -387,6 +351,25 @@ table.innerHTML+=`
 <td>${r.location}</td>
 <td>${r.date}</td>
 </tr>`
+})
+}
+
+function updateRisk(data){
+let risk=data.length
+let text="Low Risk"
+
+if(risk>10) text="High Risk ⚠️"
+else if(risk>5) text="Medium Risk"
+
+document.getElementById("riskStatus").innerText=text
+}
+
+function loadActivity(data){
+let list=document.getElementById("activityList")
+list.innerHTML=""
+
+data.slice(-5).reverse().forEach(r=>{
+list.innerHTML+=`<li>${r.disease} reported at ${r.location}</li>`
 })
 }
 
@@ -398,7 +381,15 @@ function logout(){
 window.location="login.html"
 }
 
-window.onload=loadMyReports
+// GPS
+if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(pos=>{
+document.getElementById("lat").value=pos.coords.latitude
+document.getElementById("lng").value=pos.coords.longitude
+})
+}
+
+window.onload=loadData
 </script>
 
 </body>
