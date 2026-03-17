@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reports</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h1>Reports</h1>
+
+<input type="text" placeholder="Search..." onkeyup="filterReports()">
+
+<table border="1">
+<thead>
+<tr>
+<th>Select</th>
+<th>Name</th>
+<th>Disease</th>
+<th>Location</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="reports"></tbody>
+</table>
+
+<br>
+<button onclick="deleteSelected()">Delete Selected</button>
+
+<script src="script.js"></script>
+
+</body>
+</html>

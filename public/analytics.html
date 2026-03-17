@@ -1,45 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Disease Analytics</title>
+<title>Analytics</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+font-family:'Segoe UI';
+background:#f1f5f9;
+padding:20px;
+}
+
+.chart-container{
+width:600px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+</style>
 
 </head>
 
 <body>
-<h2 style="text-align:center;">Disease Analytics Dashboard</h2>
 
-<canvas id="diseaseChart" width="400" height="200"></canvas>
+<h2 style="text-align:center;">Disease Analytics</h2>
+
+<div class="chart-container">
+<canvas id="chart"></canvas>
+</div>
+
+<script src="script.js"></script>
 
 <script>
-
-async function loadAnalytics(){
-
-const res = await fetch('/analytics')
-const data = await res.json()
-
-const labels = data.map(d=>d._id)
-const counts = data.map(d=>d.count)
-
-const ctx = document.getElementById('diseaseChart')
-
-new Chart(ctx,{
-type:'bar',
-data:{
-labels:labels,
-datasets:[{
-label:'Disease Reports',
-data:counts
-}]
-}
-})
-
-}
-
+window.onload = function(){
 loadAnalytics()
-
+}
 </script>
 
 </body>
