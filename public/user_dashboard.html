@@ -1,50 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>User Dashboard</title>
-<link rel="stylesheet" href="style.css">
+
+<!-- Responsive -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- CSS -->
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg,#4facfe,#00f2fe);
+    margin:0;
+    padding:0;
+}
+
+/* Container */
+.container{
+    width: 400px;
+    max-width: 90%;
+    margin: 50px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform: translateY(20px);}
+    to{opacity:1; transform: translateY(0);}
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+/* Inputs */
+input, button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+}
+
+/* Button */
+button{
+    background:#4facfe;
+    color:white;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#007bff;
+    transform: scale(1.03);
+}
+
+/* Logout Button */
+.logout{
+    background:red;
+}
+
+.logout:hover{
+    background:darkred;
+}
+
+/* Small text */
+.note{
+    font-size:12px;
+    color:gray;
+    text-align:center;
+}
+</style>
+
 </head>
 
 <body>
-<h2>Your Submitted Reports</h2>
 
-<table border="1">
-<thead>
-<tr>
-<th>Disease</th>
-<th>Location</th>
-<th>Date</th>
-</tr>
-</thead>
+<div class="container">
 
-<tbody id="table"></tbody>
+<h2>🦠 Report Disease</h2>
 
-</table>
+<input type="text" id="name" placeholder="Full Name" required>
+
+<input type="number" id="age" placeholder="Age" required>
+
+<input type="text" id="phone" placeholder="Phone Number" required>
+
+<!-- USER INPUT DISEASE -->
+<input type="text" id="disease" placeholder="Enter Disease Name" required>
+
+<input type="text" id="location" placeholder="Location" required>
+
+<input type="date" id="date">
+
+<!-- Hidden GPS Fields -->
+<input type="hidden" id="lat">
+<input type="hidden" id="lng">
+
+<button onclick="reportDisease()">Submit Report</button>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+<p class="note">Your location will be captured automatically 📍</p>
+
+</div>
+
+<!-- LINK YOUR JS -->
+<script src="script.js"></script>
 
 <script>
-
-const phone = localStorage.getItem("phone")
-
-fetch("/userReports/"+phone)
-.then(res=>res.json())
-.then(data=>{
-
-let rows=""
-
-data.forEach(r=>{
-rows += `
-<tr>
-<td>${r.disease}</td>
-<td>${r.location}</td>
-<td>${r.date}</td>
-</tr>
-`
-})
-
-document.getElementById("table").innerHTML = rows
-
-})
-
+function logout(){
+    alert("Logged out successfully")
+    window.location="login.html"
+}
 </script>
 
 </body>
