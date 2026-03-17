@@ -122,16 +122,16 @@ let row = `
 <td>${r.disease}</td>
 
 <td>
-${r.location} <br>
-<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" style="color:blue;">
-View on Map
+${r.location}<br>
+<a href="https://www.google.com/maps?q=${r.lat},${r.lng}" target="_blank" class="map-link">
+📍 View on Map
 </a>
 </td>
 
 <td>${r.date}</td>
 
 <td>
-<button onclick="deleteReport('${r._id}')">Delete</button>
+<button class="deleteBtn" onclick="deleteReport('${r._id}')">Delete</button>
 </td>
 
 </tr>
