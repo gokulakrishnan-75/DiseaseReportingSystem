@@ -18,7 +18,6 @@ font-family:'Segoe UI';
 background:#eef2f7;
 }
 
-/* LAYOUT */
 .layout{
 display:flex;
 }
@@ -27,20 +26,16 @@ display:flex;
 .sidebar{
 width:240px;
 height:100vh;
-background:linear-gradient(180deg,#0f172a,#1e293b);
+background:#0f172a;
 color:white;
 padding:20px;
-}
-
-.sidebar h2{
-margin-bottom:30px;
 }
 
 .sidebar button{
 width:100%;
 margin:10px 0;
 padding:12px;
-background:#334155;
+background:#1e293b;
 border:none;
 color:white;
 cursor:pointer;
@@ -50,7 +45,6 @@ transition:0.3s;
 
 .sidebar button:hover{
 background:#3b82f6;
-transform:translateX(5px);
 }
 
 /* MAIN */
@@ -63,15 +57,6 @@ padding:20px;
 .header{
 display:flex;
 justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
-
-.doctor{
-background:white;
-padding:10px 15px;
-border-radius:20px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* CARDS */
@@ -79,98 +64,48 @@ box-shadow:0 2px 5px rgba(0,0,0,0.1);
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px;
-margin-bottom:20px;
+margin:20px 0;
 }
 
 .card{
-padding:20px;
-border-radius:12px;
-color:white;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-transition:0.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-.total{background:#3b82f6;}
-.danger{background:#ef4444;}
-.today{background:#10b981;}
-
-/* ALERT */
-.alert{
-background:#ef4444;
-color:white;
-padding:12px;
-border-radius:8px;
-margin-bottom:10px;
-animation:blink 1s infinite;
-}
-
-.hidden{
-display:none;
-}
-
-@keyframes blink{
-0%{opacity:1;}
-50%{opacity:0.5;}
-100%{opacity:1;}
-}
-
-/* SEARCH */
-.search{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-/* TABLE */
-.table-container{
 background:white;
-padding:15px;
+padding:20px;
 border-radius:10px;
 box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
+/* PANELS */
+.panel{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+/* TABLE */
 table{
 width:100%;
 border-collapse:collapse;
+background:white;
 }
 
 th,td{
 padding:10px;
-text-align:left;
 border-bottom:1px solid #ddd;
 }
 
-tr:hover{
-background:#f1f5f9;
-}
-
-/* BUTTON */
-.deleteBtn{
-background:#ef4444;
-color:white;
-border:none;
-padding:6px 10px;
-border-radius:5px;
-cursor:pointer;
-}
-
-.deleteBtn:hover{
-background:#dc2626;
-}
-
-/* CHART */
-.chart-box{
-margin-top:20px;
-background:white;
-padding:20px;
+/* MAP */
+#map{
+height:400px;
 border-radius:10px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* SEARCH */
+.search{
+padding:10px;
+width:100%;
+margin-bottom:10px;
 }
 
 </style>
@@ -182,73 +117,80 @@ box-shadow:0 5px 10px rgba(0,0,0,0.1);
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>🧑‍⚕️ Health Panel</h2>
+<h2>🧑‍⚕️ Panel</h2>
 
-    <button onclick="loadReports()">📋 Patient Reports</button>
-    <button onclick="loadAnalytics()">📊 Analytics</button>
-    <button onclick="openMap()">🌍 Map</button>
-    <button onclick="downloadReports()">📥 Export</button>
+<button onclick="showPanel('home')">🏠 Dashboard</button>
+<button onclick="showPanel('reports'); loadReports()">📋 Reports</button>
+<button onclick="showPanel('analytics'); loadAnalytics()">📊 Analytics</button>
+<button onclick="showPanel('map'); loadHeatmap()">🌍 Map</button>
+
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- HEADER -->
 <div class="header">
-    <h1>Doctor Dashboard</h1>
-    <div class="doctor">👨‍⚕️ Dr. Admin</div>
+<h1>Doctor Dashboard</h1>
+<div>👨‍⚕️ Admin</div>
 </div>
 
-<!-- CARDS -->
+<!-- HOME PANEL -->
+<div id="home" class="panel active">
+
 <div class="cards">
-    <div class="card total">
-        <h3 id="totalReports">0</h3>
-        <p>Total Cases</p>
-    </div>
-
-    <div class="card danger">
-        <h3 id="topDisease">-</h3>
-        <p>Most Common Disease</p>
-    </div>
-
-    <div class="card today">
-        <h3 id="todayReports">0</h3>
-        <p>Today's Cases</p>
-    </div>
+<div class="card">
+<h3 id="totalReports">0</h3>
+<p>Total Cases</p>
 </div>
 
-<!-- ALERT -->
-<div id="alertBox" class="alert hidden">
-⚠️ High number of cases detected!
+<div class="card">
+<h3 id="topDisease">-</h3>
+<p>Top Disease</p>
 </div>
 
-<!-- SEARCH -->
-<input type="text" class="search" placeholder="Search patient..." onkeyup="filterReports()">
+<div class="card">
+<h3 id="todayReports">0</h3>
+<p>Today's Cases</p>
+</div>
+</div>
 
-<!-- TABLE -->
-<div class="table-container">
+<div class="card">
+<h3>📌 System Overview</h3>
+<p>This dashboard helps doctors monitor disease outbreaks, analyze trends, and track patient reports in real-time.</p>
+</div>
+
+</div>
+
+<!-- REPORT PANEL -->
+<div id="reports" class="panel">
+
+<input type="text" class="search" placeholder="Search..." onkeyup="filterReports()">
+
 <table>
 <thead>
 <tr>
-<th>Select</th>
 <th>Name</th>
 <th>Age</th>
-<th>Phone</th>
 <th>Disease</th>
 <th>Location</th>
 <th>Date</th>
-<th>Action</th>
 </tr>
 </thead>
-
-<tbody id="reports"></tbody>
+<tbody id="reportTable"></tbody>
 </table>
+
 </div>
 
-<!-- CHART -->
-<div class="chart-box">
-<h3>Disease Distribution</h3>
+<!-- ANALYTICS PANEL -->
+<div id="analytics" class="panel">
+<h3>Disease Analytics</h3>
 <canvas id="chart"></canvas>
+</div>
+
+<!-- MAP PANEL -->
+<div id="mapPanel" class="panel">
+<h3>Disease Heatmap</h3>
+<div id="map"></div>
 </div>
 
 </div>
@@ -258,13 +200,28 @@ box-shadow:0 5px 10px rgba(0,0,0,0.1);
 
 <script>
 
+// PANEL SWITCH
+function showPanel(panelId){
+
+document.querySelectorAll(".panel").forEach(p=>{
+p.classList.remove("active")
+})
+
+if(panelId === "map"){
+document.getElementById("mapPanel").classList.add("active")
+}else{
+document.getElementById(panelId).classList.add("active")
+}
+
+}
+
 // LOAD REPORTS
 async function loadReports(){
 
 let res = await fetch("/reports")
 let data = await res.json()
 
-let table = document.getElementById("reports")
+let table = document.getElementById("reportTable")
 table.innerHTML=""
 
 let diseaseCount={}
@@ -275,14 +232,11 @@ data.forEach(r=>{
 
 table.innerHTML+=`
 <tr>
-<td><input type="checkbox" class="selectReport" value="${r._id}"></td>
 <td>${r.name}</td>
 <td>${r.age}</td>
-<td>${r.phone}</td>
 <td>${r.disease}</td>
 <td>${r.location}</td>
 <td>${r.date}</td>
-<td><button class="deleteBtn" onclick="deleteReport('${r._id}')">Delete</button></td>
 </tr>
 `
 
@@ -301,24 +255,58 @@ document.getElementById("todayReports").innerText=todayCount
 let top=Object.keys(diseaseCount).reduce((a,b)=>diseaseCount[a]>diseaseCount[b]?a:b,"-")
 document.getElementById("topDisease").innerText=top
 
-// alert
-if(data.length>10){
-document.getElementById("alertBox").classList.remove("hidden")
-}
-
 }
 
 // SEARCH
 function filterReports(){
 let k=document.querySelector(".search").value.toLowerCase()
-document.querySelectorAll("#reports tr").forEach(row=>{
+document.querySelectorAll("#reportTable tr").forEach(row=>{
 row.style.display=row.innerText.toLowerCase().includes(k)?"":"none"
 })
 }
 
-// MAP
-function openMap(){
-window.location="/admin-map.html"
+// ANALYTICS
+async function loadAnalytics(){
+
+let res = await fetch("/analytics")
+let data = await res.json()
+
+let labels=data.map(d=>d._id)
+let values=data.map(d=>d.count)
+
+new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+label:"Cases",
+data:values
+}]
+}
+})
+
+}
+
+// HEATMAP
+async function loadHeatmap(){
+
+let res = await fetch("/reports")
+let reports = await res.json()
+
+let map = L.map('map').setView([20.5937,78.9629],5)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+
+let heatPoints=[]
+
+reports.forEach(r=>{
+if(r.lat && r.lng){
+heatPoints.push([r.lat,r.lng,0.5])
+}
+})
+
+L.heatLayer(heatPoints).addTo(map)
+
 }
 
 </script>
