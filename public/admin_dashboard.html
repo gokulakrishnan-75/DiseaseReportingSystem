@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Doctor Dashboard</title>
+<title>Doctor Admin Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -15,36 +15,70 @@
 body{
 margin:0;
 font-family:'Segoe UI';
-background:#eef2f7;
+background:linear-gradient(135deg,#e0f2fe,#f8fafc);
 }
 
+/* LAYOUT */
 .layout{
 display:flex;
 }
 
 /* SIDEBAR */
 .sidebar{
-width:240px;
+width:250px;
 height:100vh;
-background:#0f172a;
+background:rgba(15,23,42,0.95);
 color:white;
 padding:20px;
+backdrop-filter:blur(10px);
+}
+
+.sidebar h2{
+margin-bottom:20px;
 }
 
 .sidebar button{
 width:100%;
-margin:10px 0;
+margin:8px 0;
 padding:12px;
-background:#1e293b;
 border:none;
+border-radius:10px;
+background:#1e293b;
 color:white;
 cursor:pointer;
-border-radius:8px;
 transition:0.3s;
 }
 
 .sidebar button:hover{
 background:#3b82f6;
+transform:translateX(6px);
+}
+
+/* EXPORT DROPDOWN */
+.dropdown{
+position:relative;
+}
+
+.dropdown-content{
+display:none;
+position:absolute;
+background:#1e293b;
+width:100%;
+border-radius:8px;
+overflow:hidden;
+}
+
+.dropdown-content button{
+background:none;
+border:none;
+color:white;
+width:100%;
+text-align:left;
+padding:10px;
+}
+
+.dropdown:hover .dropdown-content{
+display:block;
 }
 
 /* MAIN */
@@ -57,6 +91,8 @@ padding:20px;
 .header{
 display:flex;
 justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
 /* CARDS */
@@ -64,35 +100,59 @@ justify-content:space-between;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px;
-margin:20px 0;
 }
 
 .card{
-background:white;
+background:rgba(255,255,255,0.8);
+backdrop-filter:blur(10px);
 padding:20px;
+border-radius:15px;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* SECTIONS */
+.section{
+margin-top:20px;
+}
+
+/* ACTIVITY */
+.activity{
+background:white;
+padding:15px;
 border-radius:10px;
 box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
-/* PANELS */
-.panel{
-display:none;
+.activity p{
+margin:5px 0;
 }
 
-.active{
-display:block;
-}
+/* PANELS */
+.panel{display:none;}
+.active{display:block;}
 
 /* TABLE */
 table{
 width:100%;
 border-collapse:collapse;
 background:white;
+border-radius:10px;
+overflow:hidden;
 }
 
 th,td{
 padding:10px;
 border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+background:#f1f5f9;
 }
 
 /* MAP */
@@ -106,6 +166,18 @@ border-radius:10px;
 padding:10px;
 width:100%;
 margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+/* BUTTON */
+.deleteBtn{
+background:#ef4444;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
 }
 
 </style>
@@ -117,12 +189,21 @@ margin-bottom:10px;
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-<h2>🧑‍⚕️ Panel</h2>
+<h2>🧑‍⚕️ Admin Panel</h2>
 
 <button onclick="showPanel('home')">🏠 Dashboard</button>
 <button onclick="showPanel('reports'); loadReports()">📋 Reports</button>
 <button onclick="showPanel('analytics'); loadAnalytics()">📊 Analytics</button>
 <button onclick="showPanel('map'); loadHeatmap()">🌍 Map</button>
+
+<!-- EXPORT -->
+<div class="dropdown">
+<button>📥 Export</button>
+<div class="dropdown-content">
+<button onclick="downloadReports()">Download CSV</button>
+<button onclick="exportPDF()">Download PDF</button>
+</div>
+</div>
 
 </div>
 
@@ -131,41 +212,35 @@ margin-bottom:10px;
 
 <div class="header">
 <h1>Doctor Dashboard</h1>
-<div>👨‍⚕️ Admin</div>
+<div>👨‍⚕️ Dr. Admin</div>
 </div>
 
-<!-- HOME PANEL -->
+<!-- HOME -->
 <div id="home" class="panel active">
 
 <div class="cards">
-<div class="card">
-<h3 id="totalReports">0</h3>
-<p>Total Cases</p>
+<div class="card"><h3 id="totalReports">0</h3><p>Total Cases</p></div>
+<div class="card"><h3 id="topDisease">-</h3><p>Top Disease</p></div>
+<div class="card"><h3 id="todayReports">0</h3><p>Today's Cases</p></div>
 </div>
 
-<div class="card">
-<h3 id="topDisease">-</h3>
-<p>Top Disease</p>
+<div class="section card">
+<h3>🏥 System Overview</h3>
+<p>This system helps monitor disease spread, analyze patient data, and visualize outbreaks using advanced analytics.</p>
 </div>
 
-<div class="card">
-<h3 id="todayReports">0</h3>
-<p>Today's Cases</p>
-</div>
-</div>
-
-<div class="card">
-<h3>📌 System Overview</h3>
-<p>This dashboard helps doctors monitor disease outbreaks, analyze trends, and track patient reports in real-time.</p>
+<div class="section activity">
+<h3>🔔 Recent Activity</h3>
+<p>• New case reported in city</p>
+<p>• Data exported by admin</p>
+<p>• Analytics updated</p>
 </div>
 
 </div>
 
-<!-- REPORT PANEL -->
+<!-- REPORTS -->
 <div id="reports" class="panel">
-
 <input type="text" class="search" placeholder="Search..." onkeyup="filterReports()">
-
 <table>
 <thead>
 <tr>
@@ -174,22 +249,20 @@ margin-bottom:10px;
 <th>Disease</th>
 <th>Location</th>
 <th>Date</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody id="reportTable"></tbody>
 </table>
-
 </div>
 
-<!-- ANALYTICS PANEL -->
+<!-- ANALYTICS -->
 <div id="analytics" class="panel">
-<h3>Disease Analytics</h3>
 <canvas id="chart"></canvas>
 </div>
 
-<!-- MAP PANEL -->
+<!-- MAP -->
 <div id="mapPanel" class="panel">
-<h3>Disease Heatmap</h3>
 <div id="map"></div>
 </div>
 
@@ -200,113 +273,19 @@ margin-bottom:10px;
 
 <script>
 
-// PANEL SWITCH
-function showPanel(panelId){
-
-document.querySelectorAll(".panel").forEach(p=>{
-p.classList.remove("active")
-})
-
-if(panelId === "map"){
+/* PANEL SWITCH */
+function showPanel(id){
+document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"))
+if(id==="map"){
 document.getElementById("mapPanel").classList.add("active")
 }else{
-document.getElementById(panelId).classList.add("active")
+document.getElementById(id).classList.add("active")
+}
 }
 
-}
-
-// LOAD REPORTS
-async function loadReports(){
-
-let res = await fetch("/reports")
-let data = await res.json()
-
-let table = document.getElementById("reportTable")
-table.innerHTML=""
-
-let diseaseCount={}
-let today=new Date().toLocaleDateString()
-let todayCount=0
-
-data.forEach(r=>{
-
-table.innerHTML+=`
-<tr>
-<td>${r.name}</td>
-<td>${r.age}</td>
-<td>${r.disease}</td>
-<td>${r.location}</td>
-<td>${r.date}</td>
-</tr>
-`
-
-diseaseCount[r.disease]=(diseaseCount[r.disease]||0)+1
-
-if(new Date(r.date).toLocaleDateString()===today){
-todayCount++
-}
-
-})
-
-// stats
-document.getElementById("totalReports").innerText=data.length
-document.getElementById("todayReports").innerText=todayCount
-
-let top=Object.keys(diseaseCount).reduce((a,b)=>diseaseCount[a]>diseaseCount[b]?a:b,"-")
-document.getElementById("topDisease").innerText=top
-
-}
-
-// SEARCH
-function filterReports(){
-let k=document.querySelector(".search").value.toLowerCase()
-document.querySelectorAll("#reportTable tr").forEach(row=>{
-row.style.display=row.innerText.toLowerCase().includes(k)?"":"none"
-})
-}
-
-// ANALYTICS
-async function loadAnalytics(){
-
-let res = await fetch("/analytics")
-let data = await res.json()
-
-let labels=data.map(d=>d._id)
-let values=data.map(d=>d.count)
-
-new Chart(document.getElementById("chart"),{
-type:"bar",
-data:{
-labels:labels,
-datasets:[{
-label:"Cases",
-data:values
-}]
-}
-})
-
-}
-
-// HEATMAP
-async function loadHeatmap(){
-
-let res = await fetch("/reports")
-let reports = await res.json()
-
-let map = L.map('map').setView([20.5937,78.9629],5)
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-
-let heatPoints=[]
-
-reports.forEach(r=>{
-if(r.lat && r.lng){
-heatPoints.push([r.lat,r.lng,0.5])
-}
-})
-
-L.heatLayer(heatPoints).addTo(map)
-
+/* EXPORT PDF */
+function exportPDF(){
+alert("PDF export coming soon (use jsPDF)")
 }
 
 </script>
