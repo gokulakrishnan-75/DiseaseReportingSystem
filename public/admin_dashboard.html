@@ -1,42 +1,176 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Admin Dashboard</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
+<style>
+
+/* LAYOUT */
+body{
+    margin:0;
+    font-family:'Segoe UI';
+    background:#f1f5f9;
+}
+
+.dashboard{
+    display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:230px;
+    height:100vh;
+    background:#0f172a;
+    color:white;
+    padding:20px;
+}
+
+.sidebar h2{
+    margin-bottom:30px;
+}
+
+.sidebar button{
+    width:100%;
+    margin:10px 0;
+    padding:10px;
+    background:#1e293b;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+/* MAIN */
+.main{
+    flex:1;
+    padding:20px;
+}
+
+/* TOP BAR */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.profile{
+    background:white;
+    padding:8px 15px;
+    border-radius:20px;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* TABLE */
+.table-card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+/* BUTTONS */
+.actions button{
+    margin-right:10px;
+    padding:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+/* SEARCH */
+.search{
+    margin-bottom:10px;
+    padding:8px;
+    width:100%;
+}
+
+</style>
 </head>
 
 <body>
-<div class="admin-container">
 
-<h1>Admin Dashboard</h1>
+<div class="dashboard">
 
-<div class="admin-controls">
-
-<button onclick="loadReports()">Load Reports</button>
-<button onclick="deleteSelected()">Delete Selected</button>
-<button onclick="downloadReports()">Download Excel</button>
-<button onclick="loadAnalytics()">Show Analytics</button>
-
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+    <button onclick="loadReports()">Load Reports</button>
+    <button onclick="deleteSelected()">Delete Selected</button>
+    <button onclick="downloadReports()">Download Excel</button>
+    <button onclick="loadAnalytics()">Analytics</button>
+    <button onclick="openMap()">View Map</button>
 </div>
 
-<div class="table-container">
+<!-- MAIN -->
+<div class="main">
 
-<table class="report-table">
+<!-- TOP -->
+<div class="topbar">
+    <h1>Dashboard</h1>
+    <div class="profile">👤 Admin</div>
+</div>
 
+<!-- CARDS -->
+<div class="cards">
+    <div class="card">
+        <h3 id="totalReports">0</h3>
+        <p>Total Reports</p>
+    </div>
+
+    <div class="card">
+        <h3 id="topDisease">-</h3>
+        <p>Top Disease</p>
+    </div>
+
+    <div class="card">
+        <h3 id="todayReports">0</h3>
+        <p>Today's Reports</p>
+    </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="actions">
+    <button onclick="loadReports()">Refresh</button>
+</div>
+
+<!-- SEARCH -->
+<input type="text" class="search" placeholder="Search..." onkeyup="filterReports()">
+
+<!-- TABLE -->
+<div class="table-card">
+<table>
 <thead>
-
 <tr>
 <th>Select</th>
 <th>Name</th>
@@ -47,40 +181,88 @@
 <th>Date</th>
 <th>Action</th>
 </tr>
-
 </thead>
 
-<tbody id="reports">
-
-</tbody>
+<tbody id="reports"></tbody>
 
 </table>
-<br>
-<br>
-<a href="/admin-map.html">
-<button class="mapBtn">View Disease Map</button>
-</a>
-
-<script>
-function openMap(){
-window.location.href="/admin-map.html"
-}
-</script>
-
 </div>
 
 <br>
 
+<!-- CHART -->
+<div class="card">
+<h3>Analytics</h3>
 <canvas id="chart"></canvas>
+</div>
 
 </div>
 
+</div>
 
-<script>
-
-</script>
 <script src="script.js"></script>
 
-</body>
+<script>
 
+// EXTRA ANALYTICS
+async function loadReports(){
+
+    let res = await fetch("/reports")
+    let data = await res.json()
+
+    let table = document.getElementById("reports")
+    table.innerHTML=""
+
+    let diseaseCount = {}
+    let today = new Date().toLocaleDateString()
+    let todayCount = 0
+
+    data.forEach(r=>{
+
+        table.innerHTML += `
+        <tr>
+        <td><input type="checkbox" class="selectReport" value="${r._id}"></td>
+        <td>${r.name}</td>
+        <td>${r.age}</td>
+        <td>${r.phone}</td>
+        <td>${r.disease}</td>
+        <td>${r.location}</td>
+        <td>${r.date}</td>
+        <td><button onclick="deleteReport('${r._id}')">Delete</button></td>
+        </tr>
+        `
+
+        // count diseases
+        diseaseCount[r.disease] = (diseaseCount[r.disease] || 0) + 1
+
+        if(new Date(r.date).toLocaleDateString() === today){
+            todayCount++
+        }
+
+    })
+
+    document.getElementById("totalReports").innerText = data.length
+    document.getElementById("todayReports").innerText = todayCount
+
+    // top disease
+    let top = Object.keys(diseaseCount).reduce((a,b)=> diseaseCount[a]>diseaseCount[b]?a:b,"-")
+    document.getElementById("topDisease").innerText = top
+}
+
+// SEARCH
+function filterReports(){
+    let k=document.querySelector(".search").value.toLowerCase()
+    document.querySelectorAll("#reports tr").forEach(row=>{
+        row.style.display = row.innerText.toLowerCase().includes(k) ? "" : "none"
+    })
+}
+
+// MAP
+function openMap(){
+    window.location.href="/admin-map.html"
+}
+
+</script>
+
+</body>
 </html>
